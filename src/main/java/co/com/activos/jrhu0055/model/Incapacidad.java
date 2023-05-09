@@ -7,8 +7,16 @@ public class Incapacidad {
   private String tipoDocumentoEmpleado;
   private Integer numeroDocumentoEmpleado;
   private Integer numeroContrato;
-
+  private String nombreEmpresa;
+  private Integer numeroRadicado;
+  private String fechaInicial;
+  private String fechaFinal;
+  private String tipoIncapacidad;
+  private String subTipoIncapacidad;
+  private String fechaRadicacion;
   private String estado;
+
+  private String fechaDeRadicacion;
 
     public Incapacidad() {
     }
@@ -67,5 +75,69 @@ public class Incapacidad {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public String getNombreEmpresa() {
+        return nombreEmpresa;
+    }
+
+    public void setNombreEmpresa(String nombreEmpresa) {
+        this.nombreEmpresa = nombreEmpresa;
+    }
+
+    public Integer getNumeroRadicado() {
+        return numeroRadicado;
+    }
+
+    public void setNumeroRadicado(Integer numeroRadicado) {
+        this.numeroRadicado = numeroRadicado;
+    }
+
+    public String getFechaInicial() {
+        return fechaInicial;
+    }
+
+    public void setFechaInicial(String fechaInicial) {
+        this.fechaInicial = fechaInicial;
+    }
+
+    public String getFechaFinal() {
+        return fechaFinal;
+    }
+
+    public void setFechaFinal(String fechaFinal) {
+        this.fechaFinal = fechaFinal;
+    }
+
+    public String getTipoIncapacidad() {
+        return tipoIncapacidad;
+    }
+
+    public void setTipoIncapacidad(String tipoIncapacidad) {
+        this.tipoIncapacidad = tipoIncapacidad;
+    }
+
+    public String getSubTipoIncapacidad() {
+        return subTipoIncapacidad;
+    }
+
+    public void setSubTipoIncapacidad(String subTipoIncapacidad) {
+        this.subTipoIncapacidad = subTipoIncapacidad;
+    }
+
+    public String getFechaRadicacion() {
+        return fechaRadicacion;
+    }
+
+    public void setFechaRadicacion(String fechaRadicacion) {
+        this.fechaRadicacion = fechaRadicacion;
+    }
+
+    public String getFechaDeRadicacion() {
+        return fechaDeRadicacion;
+    }
+
+    public void setFechaDeRadicacion(String fechaDeRadicacion) {
+        this.fechaDeRadicacion = fechaDeRadicacion;
     }
 }

@@ -8,7 +8,7 @@ public class Enfermedad  implements Serializable {
     private String nombreEnfermedad;
 
     private String codigoSubtipoEnfermedad;
-    private String codigoGrupoEnfermedadl;
+    private String codigoGrupoEnfermedad;
 
     public Enfermedad() {
 
@@ -38,12 +38,12 @@ public class Enfermedad  implements Serializable {
         this.codigoSubtipoEnfermedad = codigoSubtipoEnfermedad;
     }
 
-    public String getCodigoGrupoEnfermedadl() {
-        return codigoGrupoEnfermedadl;
+    public String getCodigoGrupoEnfermedad() {
+        return codigoGrupoEnfermedad;
     }
 
-    public void setCodigoGrupoEnfermedadl(String codigoGrupoEnfermedadl) {
-        this.codigoGrupoEnfermedadl = codigoGrupoEnfermedadl;
+    public void setCodigoGrupoEnfermedad(String codigoGrupoEnfermedad) {
+        this.codigoGrupoEnfermedad = codigoGrupoEnfermedad;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class Enfermedad  implements Serializable {
             return false;
         if (!Objects.equals(codigoSubtipoEnfermedad, that.codigoSubtipoEnfermedad))
             return false;
-        return Objects.equals(codigoGrupoEnfermedadl, that.codigoGrupoEnfermedadl);
+        return Objects.equals(codigoGrupoEnfermedad, that.codigoGrupoEnfermedad);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class Enfermedad  implements Serializable {
         int result = codigoEnfermedad != null ? codigoEnfermedad.hashCode() : 0;
         result = 31 * result + (nombreEnfermedad != null ? nombreEnfermedad.hashCode() : 0);
         result = 31 * result + (codigoSubtipoEnfermedad != null ? codigoSubtipoEnfermedad.hashCode() : 0);
-        result = 31 * result + (codigoGrupoEnfermedadl != null ? codigoGrupoEnfermedadl.hashCode() : 0);
+        result = 31 * result + (codigoGrupoEnfermedad != null ? codigoGrupoEnfermedad.hashCode() : 0);
         return result;
     }
 
@@ -77,7 +77,7 @@ public class Enfermedad  implements Serializable {
                 "codigoEnfermedad='" + codigoEnfermedad + '\'' +
                 ", nombreEnfermedad='" + nombreEnfermedad + '\'' +
                 ", codigoSubtipoEnfermedad='" + codigoSubtipoEnfermedad + '\'' +
-                ", codigoGrupoEnfermedadl='" + codigoGrupoEnfermedadl + '\'' +
+                ", codigoGrupoEnfermedadl='" + codigoGrupoEnfermedad + '\'' +
                 '}';
     }
 }

@@ -17,7 +17,7 @@ public class RadicadoDTO implements Serializable {
     private String tipoDocumentoEmpleado;
     private Integer numeroDocumentoEmpleado;
     private Integer numeroDocumentoEmpresaPrincipal;
-    private String tipoDocumentoEmpresaPrincioal;
+    private String tipoDocumentoEmpresaPrincipal;
     private Integer contrato;
     private Integer idGrupoEnfermedad;
     private Integer idSubGrupoEnfermedad;
@@ -36,6 +36,8 @@ public class RadicadoDTO implements Serializable {
     private TipoAccion tipoAccion;
     private List<Documento> documentosACargar;
     private NivelCreacion nivel = NC;
+
+    private String direccionIp;
 
     public RadicadoDTO() {
     }
@@ -125,13 +127,15 @@ public class RadicadoDTO implements Serializable {
         this.numeroDocumentoEmpresaPrincipal = numeroDocumentoEmpresaPrincipal;
     }
 
-    public String getTipoDocumentoEmpresaPrincioal() {
-        return tipoDocumentoEmpresaPrincioal;
+    public String getTipoDocumentoEmpresaPrincipal() {
+        return tipoDocumentoEmpresaPrincipal;
     }
 
-    public void setTipoDocumentoEmpresaPrincioal(String tipoDocumentoEmpresaPrincioal) {
-        this.tipoDocumentoEmpresaPrincioal = tipoDocumentoEmpresaPrincioal;
+    public void setTipoDocumentoEmpresaPrincipal(String tipoDocumentoEmpresaPrincipal) {
+        this.tipoDocumentoEmpresaPrincipal = tipoDocumentoEmpresaPrincipal;
     }
+
+ 
 
     public Integer getContrato() {
         return contrato;
@@ -232,6 +236,14 @@ public class RadicadoDTO implements Serializable {
 
     public Integer getIdUsuarioCrea() {
         return idUsuarioCrea;
+    }
+
+    public String getDireccionIp() {
+        return direccionIp;
+    }
+
+    public void setDireccionIp(String direccionIp) {
+        this.direccionIp = direccionIp;
     }
 
     public void setIdUsuarioCrea(Integer idUsuarioCrea) {

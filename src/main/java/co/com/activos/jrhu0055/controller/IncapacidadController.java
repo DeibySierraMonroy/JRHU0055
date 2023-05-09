@@ -2,6 +2,7 @@ package co.com.activos.jrhu0055.controller;
 
 import co.com.activos.jrhu0055.DTO.ContratoDTO;
 import co.com.activos.jrhu0055.DTO.RadicadoDTO;
+import co.com.activos.jrhu0055.DTO.ValidacionRadicadoDTO;
 import co.com.activos.jrhu0055.Services.impl.IncapacidadService;
 import co.com.activos.jrhu0055.model.*;
 import co.com.activos.jrhu0055.utiliti.RespuestaGenerica;
@@ -22,11 +23,14 @@ public class IncapacidadController {
     @Inject
     private IncapacidadService service;
 
-    @GET
+    @Inject
+    private CrearRadicado crear;
+
+    @POST
     @Path("/listarIncapacidades")
-    public Response listarIncapacidades() {
+    public Response listarIncapacidades(ContratoDTO contratoDTO) {
         List<Incapacidad> listarIncapacidades
-                = service.listaIncapacidades().stream()
+                = service.listaIncapacidades(contratoDTO).stream()
                 .sorted(Comparator.comparing(Incapacidad::getEstado))
                 .collect(Collectors.toList());
         GenericEntity<List<Incapacidad>> incapacidades = new GenericEntity<List<Incapacidad>>(listarIncapacidades) {
@@ -115,7 +119,6 @@ public class IncapacidadController {
         }
     }
 
-
     @GET
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
@@ -132,7 +135,6 @@ public class IncapacidadController {
                     .status(Response.Status.OK)
                     .entity(documentos)
                     .build();
-
         } catch (Exception e) {
             return Response.noContent()
                     .entity(new
@@ -140,7 +142,6 @@ public class IncapacidadController {
                     .build();
         }
     }
-
 
     @GET
     @Consumes({MediaType.APPLICATION_JSON})
@@ -169,7 +170,6 @@ public class IncapacidadController {
         }
     }
 
-
     @GET
     @Path("/terminos/")
     public Response terminosYCondiciones(){
@@ -186,15 +186,13 @@ public class IncapacidadController {
         }
     }
 
-
-
     @POST
     @Path("/radicado/")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response crearRadicado(RadicadoDTO radicadoDTO) {
         try {
-            RespuestaGenerica<DocumentoAlmacenado> respuestaDelProceso = service.crearRadicado(radicadoDTO);
+            RespuestaGenerica<DocumentoAlmacenado> respuestaDelProceso = crear.crearRadicado(radicadoDTO);
             if (!TipoRespuesta.ERROR.equals(respuestaDelProceso.getStatus())) {
                 return Response.ok()
                         .type(MediaType.APPLICATION_JSON)
@@ -202,10 +200,27 @@ public class IncapacidadController {
                         .build();
             }
             return Response.noContent().entity
-                    (new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error al Crear el Radicado debido a "
-                            + respuestaDelProceso.getMensaje())).build();
+                    (new RespuestaGenerica<>(TipoRespuesta.ERROR, respuestaDelProceso.getMensaje())).build();
         } catch (Exception e) {
             return Response.noContent().entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", e)).build();
         }
     }
+
+    @POST
+    @Path("/validaciones/")
+    public Response validarRadicado(ValidacionRadicadoDTO validacionRadicadoDTO){
+        try{
+            RespuestaGenerica<String> validacion = service.validacionesRadicado(validacionRadicadoDTO);
+            return Response.ok()
+                    .type(MediaType.APPLICATION_JSON)
+                    .entity(validacion)
+                    .build();
+        }catch (Exception e){
+            return Response.noContent().entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", e)).build();
+        }
+    }
+
+
+
+
 }

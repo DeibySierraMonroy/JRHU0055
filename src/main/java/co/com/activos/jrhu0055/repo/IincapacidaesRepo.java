@@ -2,6 +2,7 @@ package co.com.activos.jrhu0055.repo;
 
 import co.com.activos.jrhu0055.DTO.ContratoDTO;
 import co.com.activos.jrhu0055.DTO.RadicadoDTO;
+import co.com.activos.jrhu0055.DTO.ValidacionRadicadoDTO;
 import co.com.activos.jrhu0055.Services.IincapacidadService;
 import co.com.activos.jrhu0055.model.*;
 import co.com.activos.jrhu0055.utiliti.Conexion;
@@ -22,11 +23,15 @@ public class IincapacidaesRepo implements IincapacidadService {
 
 
     @Override
-    public List<Incapacidad> incapacidades() {
+    public List<Incapacidad> incapacidades(ContratoDTO contratoDTO) {
         List<Incapacidad> listaIncapacidades = new ArrayList<>();
         try (Connection connection = Conexion.getConnection()){
-            String consulta = "call RHU.QB_APLICATION_JRHU0055.PL_OBTENER_TODAS_INCAPACIDADES(?,?,?)";
+            String consulta = "call RHU.QB_APLICATION_JRHU0055.PL_OBTENER_TODAS_INCAPACIDADES(?,?,?,?,?,?,?)";
             try(CallableStatement callableStatement = connection.prepareCall(consulta)){
+                callableStatement.setString("VCTIPODOCUMENTO",contratoDTO.getTipoDocumentoEmpleado());
+                callableStatement.setInt("NMDOCUMENTO",contratoDTO.getDocumentoEmpleado());
+                callableStatement.setString("VCTIPODOCUMENTOEMPRE",contratoDTO.getTipoDocumentoEmpresa());
+                callableStatement.setInt("NMDOCUMENTOPRINCIPAL",contratoDTO.getDocumentoEmpresa());
                 callableStatement.registerOutParameter("RCINC", OracleTypes.CURSOR);
                 callableStatement.registerOutParameter("VCESTADO_PROCESO", OracleTypes.VARCHAR);
                 callableStatement.registerOutParameter("VCMENSAJE_PROCESO", OracleTypes.VARCHAR);
@@ -36,23 +41,23 @@ public class IincapacidaesRepo implements IincapacidadService {
                 while (resultSet.next()){
                     Incapacidad incapacidad = new Incapacidad();
                     incapacidad.setEstado(resultSet.getString("INC_ESTADO"));
-                    incapacidad.setNitEmpresa(resultSet.getInt("EMP_ND"));
                     incapacidad.setNumeroContrato(resultSet.getInt("CTO_NUMERO"));
                     incapacidad.setSigla(resultSet.getString("TEN_SIGLA"));
-                    incapacidad.setTipoDocumentoEmpresa(resultSet.getString("TDC_TD"));
-                    incapacidad.setTipoDocumentoEmpleado(resultSet.getString("TDC_TD_EPL"));
-                    incapacidad.setNumeroDocumentoEmpleado(resultSet.getInt("EPL_ND"));
+                    incapacidad.setFechaFinal(resultSet.getString("INC_FECFIN"));
+                    incapacidad.setFechaInicial(resultSet.getString("INC_FECINI"));
+                    incapacidad.setNombreEmpresa(resultSet.getString("NOMBRE_EMPRESA_PRINCIPAL"));
+                    incapacidad.setTipoIncapacidad(resultSet.getString("TIPO_INCAPACIDAD"));
+                    incapacidad.setSubTipoIncapacidad(resultSet.getString("SUB_TIPO_INCAPACIDAD"));
+                    incapacidad.setNumeroRadicado(resultSet.getInt("INC_RADICACION"));
+                    incapacidad.setFechaDeRadicacion(resultSet.getString("INC_FECHA_CREACION"));
                     listaIncapacidades.add(incapacidad);
                 }
                 callableStatement.close();
                 return listaIncapacidades;
             }
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
-
         }
-
     }
 
     @Override
@@ -81,7 +86,6 @@ public class IincapacidaesRepo implements IincapacidadService {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     @Override
@@ -186,7 +190,6 @@ public class IincapacidaesRepo implements IincapacidadService {
 
     }
 
-
     @Override
     public InformacionTaxonomia obtenerInformacionTaxonomia(String deaCodigo, String nombreCarpeta) {
         InformacionTaxonomia informacionTaxonomia = new InformacionTaxonomia();
@@ -233,7 +236,7 @@ public class IincapacidaesRepo implements IincapacidadService {
                 while (resultSet.next()){
                     Enfermedad enfermedad = new Enfermedad();
                     enfermedad.setCodigoEnfermedad(resultSet.getString("ENF_COD"));
-                    enfermedad.setCodigoGrupoEnfermedadl(resultSet.getString("GEN_COD"));
+                    enfermedad.setCodigoGrupoEnfermedad(resultSet.getString("GEN_COD"));
                     enfermedad.setCodigoSubtipoEnfermedad(resultSet.getString("SEN_COD"));
                     enfermedad.setNombreEnfermedad(resultSet.getString("ENF_NOMBRE"));
                     listaDeEnfermedades.add(enfermedad);
@@ -242,7 +245,8 @@ public class IincapacidaesRepo implements IincapacidadService {
                 return new RespuestaGenerica<>(TipoRespuesta.SUCCESS,"Consulta Generada",listaDeEnfermedades);
             }
         } catch (SQLException e) {
-            return new RespuestaGenerica<>(TipoRespuesta.ERROR,"Error no contralado en IincapacidaesRepo:listarEnfermedades debido a :" +
+            return new RespuestaGenerica<>(TipoRespuesta.ERROR,
+                    "Error no contralado en IincapacidaesRepo:listarEnfermedades debido a :" +
                     e);
         }
 
@@ -301,12 +305,12 @@ public class IincapacidaesRepo implements IincapacidadService {
     @Override
     public RespuestaGenerica<Integer> crearRadicado(RadicadoDTO radicadoDTO)  {
         try(Connection connection = Conexion.getConnection()){
-            String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_CREAR_RADICADO(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+            String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_CREAR_RADICADO(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
             try(CallableStatement callableStatement = connection.prepareCall(consulta)){
                 callableStatement.setString("VCTDOCUMENTO",radicadoDTO.getTipoDocumentoEmpleado());
                 callableStatement.setInt("NMDOCUMENTO",radicadoDTO.getNumeroDocumentoEmpleado());
                 callableStatement.setInt("NMEMPPRINCIPAL",radicadoDTO.getNumeroDocumentoEmpresaPrincipal());
-                callableStatement.setString("VCTIPODOCEMPR",radicadoDTO.getTipoDocumentoEmpresaPrincioal());
+                callableStatement.setString("VCTIPODOCEMPR",radicadoDTO.getTipoDocumentoEmpresaPrincipal());
                 callableStatement.setInt("NMCONTRATO",radicadoDTO.getContrato());
                 callableStatement.setInt("NMCODGENFE",radicadoDTO.getIdGrupoEnfermedad());
                 callableStatement.setInt("NMCODSGENFE",radicadoDTO.getIdSubGrupoEnfermedad());
@@ -318,22 +322,50 @@ public class IincapacidaesRepo implements IincapacidadService {
                 callableStatement.setString("VCPRORROGA",radicadoDTO.getProrroga());
                 callableStatement.setInt("NMIDUSUARIO",radicadoDTO.getIdUsuarioCrea());
                 callableStatement.setInt("NMSUBCONTI",radicadoDTO.getIdSubTipoContigencia());
+                callableStatement.setString("NMIPUSUARIO" , radicadoDTO.getDireccionIp());
                 callableStatement.registerOutParameter("NMRADICADO" , OracleTypes.NUMBER);
                 callableStatement.registerOutParameter("VCESTADO_PROCESO" , OracleTypes.VARCHAR);
                 callableStatement.registerOutParameter("VCMENSAJE_PROCESO" , OracleTypes.VARCHAR);
                 callableStatement.execute();
-
+                String mensaje = callableStatement.getString("VCMENSAJE_PROCESO");
                 if ("S".equals(callableStatement.getString("VCESTADO_PROCESO"))){
                     return new RespuestaGenerica<>(TipoRespuesta.SUCCESS,"OK",
                             callableStatement.getInt("NMRADICADO"));
                 }
                 callableStatement.close();
-                return new RespuestaGenerica<>(TipoRespuesta.WARNING,"FALLO AL CREAR EL RADICADO");
+                return new RespuestaGenerica<>(TipoRespuesta.WARNING,"FALLO AL CREAR EL RADICADO " + mensaje);
             }
-
         } catch (SQLException e) {
-            return new RespuestaGenerica<>(TipoRespuesta.ERROR,"ERROR NO CONTROLADO EN IincapacidaesRepo::crearRadicado DEBIDO A : "+ e);
+            return new RespuestaGenerica<>(TipoRespuesta.ERROR,"IincapacidaesRepo::crearRadicado DEBIDO A : "+ e);
         }
+    }
 
+    @Override
+    public RespuestaGenerica<String> validacionRadicado(ValidacionRadicadoDTO validacionRadicadoDTO) {
+        String estadoProceso = "";
+        String mensajeProceso = "";
+        try(Connection connection = Conexion.getConnection()){
+            String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_VALIDACION_RADICADO(?,?,?,?,?,?,?,?,?)}";
+            try(CallableStatement callableStatement = connection.prepareCall(consulta)){
+                callableStatement.setString("VCFECHAINICIO",validacionRadicadoDTO.getFechaIncio());
+                callableStatement.setInt("NMDOCUMENTOEPL",validacionRadicadoDTO.getContratoDTO().getDocumentoEmpleado());
+                callableStatement.setInt("NMCONTRATO",validacionRadicadoDTO.getNumeroContrato());
+                callableStatement.setInt("NMNUMERODIAS",validacionRadicadoDTO.getNumeroDeDias());
+                callableStatement.setString("VCTIPDOCUMEEPL",validacionRadicadoDTO.getContratoDTO().getTipoDocumentoEmpleado());
+                callableStatement.setInt("NMDOCUMENTOPAL",validacionRadicadoDTO.getContratoDTO().getDocumentoEmpresa());
+                callableStatement.setString("VCTIPODOCUMPAL",validacionRadicadoDTO.getContratoDTO().getTipoDocumentoEmpresa());
+                callableStatement.registerOutParameter("VCESTADO_PROCESO",OracleTypes.VARCHAR);
+                callableStatement.registerOutParameter("VCMENSAJE_PROCESO",OracleTypes.VARCHAR);
+                callableStatement.execute();
+                estadoProceso = callableStatement.getString("VCESTADO_PROCESO");
+                mensajeProceso = callableStatement.getString("VCMENSAJE_PROCESO");
+                if ("N".equals(estadoProceso)){
+                    return new RespuestaGenerica<>(TipoRespuesta.ERROR,mensajeProceso);
+                }
+            }
+        } catch (SQLException e) {
+            return new RespuestaGenerica<>(TipoRespuesta.ERROR,"Error no contralado debido a : " + e.getMessage());
+        }
+        return new RespuestaGenerica<>(TipoRespuesta.SUCCESS,"OK");
     }
 }
