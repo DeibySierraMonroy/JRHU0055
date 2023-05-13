@@ -8,15 +8,17 @@ public class ValidacionRadicadoDTO implements Serializable {
     private Integer numeroContrato;
     private ContratoDTO contratoDTO;
 
-    private String fechaIncio;
+    private String fechaInicio;
 
-    public String getFechaIncio() {
-        return fechaIncio;
+    public String getFechaInicio() {
+        return fechaInicio;
     }
 
-    public void setFechaIncio(String fechaIncio) {
-        this.fechaIncio = fechaIncio;
+    public void setFechaInicio(String fechaInicio) {
+        this.fechaInicio = fechaInicio;
     }
+
+
 
     public Integer getNumeroDeDias() {
         return numeroDeDias;

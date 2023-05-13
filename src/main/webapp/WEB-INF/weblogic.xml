@@ -4,5 +4,5 @@
     <keepgenerated>true</keepgenerated>
     <debug>true</debug>
   </jsp-descriptor>
-  <context-root>/JRHU0055</context-root>
+  <context-root>/JRHU0055B</context-root>
 </weblogic-web-app>

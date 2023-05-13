@@ -7,6 +7,7 @@ import java.util.Map;
 public class RespuestaGenerica<T> implements Serializable{
     private TipoRespuesta status;
     private String mensaje;
+    private Integer valorRetorno;
 
     private String resultadoSubidaDocumentos;
     private T objeto;
@@ -16,8 +17,12 @@ public class RespuestaGenerica<T> implements Serializable{
 
     public RespuestaGenerica() {
     }
-    
-    
+
+    public RespuestaGenerica(TipoRespuesta status, String mensaje, Integer valorRetorno) {
+        this.status = status;
+        this.mensaje = mensaje;
+        this.valorRetorno = valorRetorno;
+    }
 
     public RespuestaGenerica(TipoRespuesta status, String mensaje) {
         this.status = status;
@@ -104,4 +109,14 @@ public class RespuestaGenerica<T> implements Serializable{
     public void setResultadoSubidaDocumentos(String resultadoSubidaDocumentos) {
         this.resultadoSubidaDocumentos = resultadoSubidaDocumentos;
     }
+
+    public Integer getValorRetorno() {
+        return valorRetorno;
+    }
+
+    public void setValorRetorno(Integer valorRetorno) {
+        this.valorRetorno = valorRetorno;
+    }
+    
+    
 }

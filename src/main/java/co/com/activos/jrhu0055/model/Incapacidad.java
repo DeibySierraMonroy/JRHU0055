@@ -16,6 +16,10 @@ public class Incapacidad {
   private String fechaRadicacion;
   private String estado;
 
+  private String numeroDeDias;
+
+  private String nombreDelEmpleado;
+
   private String fechaDeRadicacion;
 
     public Incapacidad() {
@@ -139,5 +143,21 @@ public class Incapacidad {
 
     public void setFechaDeRadicacion(String fechaDeRadicacion) {
         this.fechaDeRadicacion = fechaDeRadicacion;
+    }
+
+    public String getNombreDelEmpleado() {
+        return nombreDelEmpleado;
+    }
+
+    public void setNombreDelEmpleado(String nombreDelEmpleado) {
+        this.nombreDelEmpleado = nombreDelEmpleado;
+    }
+
+    public String getNumeroDeDias() {
+        return numeroDeDias;
+    }
+
+    public void setNumeroDeDias(String numeroDeDias) {
+        this.numeroDeDias = numeroDeDias;
     }
 }

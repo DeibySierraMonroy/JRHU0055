@@ -39,6 +39,10 @@ public class RadicadoDTO implements Serializable {
 
     private String direccionIp;
 
+    private String estadoRadicado;
+
+    private String fechaFueroMaterno;
+
     public RadicadoDTO() {
     }
 
@@ -47,6 +51,16 @@ public class RadicadoDTO implements Serializable {
         // NR : NIVEL RADICACION SEGUNDO NIVEL DE CREACION DE CARPETA
         NC,NR
     }
+
+    public RadicadoDTO(String azCodigo, String deaCodigo , List<Documento> documentosACargar , String tipoACargar) {
+        this.azCodigo = azCodigo;
+        this.deaCodigo = deaCodigo;
+        this.documentosACargar = documentosACargar;
+        this.tipoACargar=tipoACargar;
+    }
+    
+    
+    
     public RadicadoDTO(Integer numeroRadicado, String azCodigo, String deaCodigo, Integer numeroDocumentoEmpleado, String tipoACargar,NivelCreacion nivel) {
         this.numeroRadicado = numeroRadicado;
         this.azCodigo = azCodigo;
@@ -248,5 +262,21 @@ public class RadicadoDTO implements Serializable {
 
     public void setIdUsuarioCrea(Integer idUsuarioCrea) {
         this.idUsuarioCrea = idUsuarioCrea;
+    }
+
+    public String getFechaFueroMaterno() {
+        return fechaFueroMaterno;
+    }
+
+    public void setFechaFueroMaterno(String fechaFueroMaterno) {
+        this.fechaFueroMaterno = fechaFueroMaterno;
+    }
+
+    public String getEstadoRadicado() {
+        return estadoRadicado;
+    }
+
+    public void setEstadoRadicado(String estadoRadicado) {
+        this.estadoRadicado = estadoRadicado;
     }
 }

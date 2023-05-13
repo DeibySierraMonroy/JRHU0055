@@ -42,12 +42,12 @@ public class ServicioRest {
                     "Error Consumiendo servicio en ServicioRest:crearTaxonomiaIncapacidades debido a :" + e.getMessage());
         }
         return obtenerRespuestaServicio(responseMessage, reponse.toString());
-    }
+    } 
 
     private static RespuestaGenerica<InformacionTaxonomia> obtenerRespuestaServicio(String repuesta, String body) {
         InformacionTaxonomia informacionTaxonomia = new InformacionTaxonomia();
         try {
-            if (body != null  &&  !("ERROR".equals(repuesta))) {
+            if (body != null  &&  !(body.contains("ERROR"))) {
                 String azCodigoCli = body.split("azCodigoCli=")[1].split(",")[0];
                 String deaCodigo   = body.split("deaCodigo=")[1].split("}")[0];
                 informacionTaxonomia.setEstado(true);

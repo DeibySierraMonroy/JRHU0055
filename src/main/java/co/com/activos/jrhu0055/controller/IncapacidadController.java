@@ -1,8 +1,7 @@
 package co.com.activos.jrhu0055.controller;
 
-import co.com.activos.jrhu0055.DTO.ContratoDTO;
-import co.com.activos.jrhu0055.DTO.RadicadoDTO;
-import co.com.activos.jrhu0055.DTO.ValidacionRadicadoDTO;
+import co.com.activos.jrhu0055.DTO.*;
+import co.com.activos.jrhu0055.Services.impl.CrearRadicadoService;
 import co.com.activos.jrhu0055.Services.impl.IncapacidadService;
 import co.com.activos.jrhu0055.model.*;
 import co.com.activos.jrhu0055.utiliti.RespuestaGenerica;
@@ -24,15 +23,15 @@ public class IncapacidadController {
     private IncapacidadService service;
 
     @Inject
-    private CrearRadicado crear;
+    private CrearRadicadoService crear;
 
     @POST
     @Path("/listarIncapacidades")
     public Response listarIncapacidades(ContratoDTO contratoDTO) {
         List<Incapacidad> listarIncapacidades
                 = service.listaIncapacidades(contratoDTO).stream()
-                .sorted(Comparator.comparing(Incapacidad::getEstado))
-                .collect(Collectors.toList());
+                        .sorted(Comparator.comparing(Incapacidad::getEstado))
+                        .collect(Collectors.toList());
         GenericEntity<List<Incapacidad>> incapacidades = new GenericEntity<List<Incapacidad>>(listarIncapacidades) {
         };
         return Response
@@ -50,9 +49,9 @@ public class IncapacidadController {
         try {
             List<TipoIncapacidad> tipoIncapacidades
                     = service.listaTipoIncapacidades()
-                    .stream()
-                    .sorted(Comparator.comparing(TipoIncapacidad::getCodigoTipoIncapacidad))
-                    .collect(Collectors.toList());
+                            .stream()
+                            .sorted(Comparator.comparing(TipoIncapacidad::getCodigoTipoIncapacidad))
+                            .collect(Collectors.toList());
             GenericEntity<List<TipoIncapacidad>> incapacidades = new GenericEntity<List<TipoIncapacidad>>(tipoIncapacidades) {
             };
             return Response
@@ -78,9 +77,9 @@ public class IncapacidadController {
         try {
             List<SubTipoIncapacidad> subTipoIncapacidades
                     = service.listaSubTipoIncapacidades(idTipoIncapacidad)
-                    .stream()
-                    .sorted(Comparator.comparing(SubTipoIncapacidad::getCodigoSubTipoIncapacidad))
-                    .collect(Collectors.toList());
+                            .stream()
+                            .sorted(Comparator.comparing(SubTipoIncapacidad::getCodigoSubTipoIncapacidad))
+                            .collect(Collectors.toList());
             GenericEntity<List<SubTipoIncapacidad>> subTipoIncapacidad
                     = new GenericEntity<List<SubTipoIncapacidad>>(subTipoIncapacidades) {
             };
@@ -104,9 +103,9 @@ public class IncapacidadController {
         try {
             List<Contrato> listarContratos
                     = service.listaContratos(contratoDTO)
-                    .stream()
-                    .sorted(Comparator.comparing(Contrato::getFechaFinalizacionContrato).reversed())
-                    .collect(Collectors.toList());
+                            .stream()
+                            .sorted(Comparator.comparing(Contrato::getFechaFinalizacionContrato).reversed())
+                            .collect(Collectors.toList());
             GenericEntity<List<Contrato>> contratos
                     = new GenericEntity<List<Contrato>>(listarContratos) {
             };
@@ -125,8 +124,8 @@ public class IncapacidadController {
     @Path("/enfermedades/")
     public Response listarEnfermedades() {
         try {
-            List<Enfermedad> enfermedades =
-                    service.listarEnfermedades().getListaResultados()
+            List<Enfermedad> enfermedades
+                    = service.listarEnfermedades().getListaResultados()
                             .stream().limit(20)
                             .collect(Collectors.toList());
             GenericEntity<List<Enfermedad>> documentos = new GenericEntity<List<Enfermedad>>(enfermedades) {
@@ -137,8 +136,7 @@ public class IncapacidadController {
                     .build();
         } catch (Exception e) {
             return Response.noContent()
-                    .entity(new
-                            RespuestaGenerica<>(TipoRespuesta.ERROR,"Error al obtener la lista de enfermedades debido a" + e))
+                    .entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error al obtener la lista de enfermedades debido a" + e))
                     .build();
         }
     }
@@ -151,9 +149,9 @@ public class IncapacidadController {
         try {
             List<DocumentoPorSubtipoIncapacidad> documentoPorSubtipoIncapacidads
                     = service.listarDocumentos(idSubtipoIncapacidad)
-                    .stream()
-                    .sorted(Comparator.comparing(DocumentoPorSubtipoIncapacidad::getRequerido))
-                    .collect(Collectors.toList());
+                            .stream()
+                            .sorted(Comparator.comparing(DocumentoPorSubtipoIncapacidad::getRequerido))
+                            .collect(Collectors.toList());
             GenericEntity<List<DocumentoPorSubtipoIncapacidad>> documentos
                     = new GenericEntity<List<DocumentoPorSubtipoIncapacidad>>(documentoPorSubtipoIncapacidads) {
             };
@@ -172,10 +170,10 @@ public class IncapacidadController {
 
     @GET
     @Path("/terminos/")
-    public Response terminosYCondiciones(){
+    public Response terminosYCondiciones() {
         try {
-            TerminosYCondiciones terminosYCondiciones =
-                    service.obtenerTerminosYCondiciones().getObjeto();
+            TerminosYCondiciones terminosYCondiciones
+                    = service.obtenerTerminosYCondiciones().getObjeto();
             return Response.ok()
                     .entity(terminosYCondiciones)
                     .type(MediaType.APPLICATION_JSON)
@@ -193,14 +191,13 @@ public class IncapacidadController {
     public Response crearRadicado(RadicadoDTO radicadoDTO) {
         try {
             RespuestaGenerica<DocumentoAlmacenado> respuestaDelProceso = crear.crearRadicado(radicadoDTO);
-            if (!TipoRespuesta.ERROR.equals(respuestaDelProceso.getStatus())) {
+            if (TipoRespuesta.SUCCESS.equals(respuestaDelProceso.getStatus())) {
                 return Response.ok()
                         .type(MediaType.APPLICATION_JSON)
                         .entity(respuestaDelProceso)
                         .build();
             }
-            return Response.noContent().entity
-                    (new RespuestaGenerica<>(TipoRespuesta.ERROR, respuestaDelProceso.getMensaje())).build();
+            return Response.noContent().entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, respuestaDelProceso.getMensaje())).build();
         } catch (Exception e) {
             return Response.noContent().entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", e)).build();
         }
@@ -208,19 +205,147 @@ public class IncapacidadController {
 
     @POST
     @Path("/validaciones/")
-    public Response validarRadicado(ValidacionRadicadoDTO validacionRadicadoDTO){
-        try{
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response validarRadicado(ValidacionRadicadoDTO validacionRadicadoDTO) {
+        try {
             RespuestaGenerica<String> validacion = service.validacionesRadicado(validacionRadicadoDTO);
             return Response.ok()
                     .type(MediaType.APPLICATION_JSON)
                     .entity(validacion)
                     .build();
-        }catch (Exception e){
+        } catch (Exception e) {
             return Response.noContent().entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", e)).build();
         }
     }
 
+    @GET
+    @Path("/listarDocumentosPorRadicado/{numeroRadicado}/{ipUsuario}")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response listarDocumentosPorRadicado(@PathParam("numeroRadicado") Integer numeroRadicado, @PathParam("ipUsuario") String ipUsuario) {
+        try {
+            List<DocumentoCargado> documentosCargados
+                    = service.documentosCargadosPorRadicado(ipUsuario, numeroRadicado)
+                            .getListaResultados()
+                            .stream()
+                            .sorted(Comparator.comparing(DocumentoCargado::getDocumentoRequerido))
+                            .collect(Collectors.toList());
+            GenericEntity<List<DocumentoCargado>> documentos
+                    = new GenericEntity<List<DocumentoCargado>>(documentosCargados) {
+            };
+            return Response.ok()
+                    .entity(documentos)
+                    .status(Response.Status.OK)
+                    .type(MediaType.APPLICATION_JSON_TYPE)
+                    .build();
+        } catch (Exception e) {
+            return Response.noContent().entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", e)).build();
+        }
 
+    }
 
+    @POST
+    @Path("/actulizarDocumentos")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response documentoActualizado(DocumentoActualizadoDTO documentoActualizadoDTO){
+        try{
+            RespuestaGenerica documentoActual = service.documentoActualizado(documentoActualizadoDTO);
+            return Response.ok()
+                    .status(Response.Status.OK)
+                    .entity(documentoActual)
+                    .build();
+        } catch (Exception e) {
+            return Response.noContent().entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", e)).build();
+        }
+    }
 
+    @POST
+    @Path("/cargarArchivo")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response archivoCargado(RadicadoDTO radicadoDTO){
+      try{
+          RespuestaGenerica<DocumentoAlmacenado> documentoCargado = crear.cargarDocumento(radicadoDTO);
+          if (!TipoRespuesta.ERROR.equals(documentoCargado.getStatus())) {
+              actualizarEstadoRadicacion(radicadoDTO);
+              return Response.ok()
+                      .type(MediaType.APPLICATION_JSON)
+                      .entity(documentoCargado)
+                      .build();
+          }
+          return Response.noContent().entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, documentoCargado.getMensaje())).build();
+
+      } catch (Exception e) {
+           return Response.noContent().entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", e)).build();
+      }
+
+    }
+
+    @PUT
+    @Path("/actualizarEstado/")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response actualizarEstadoRadicacion(RadicadoDTO radicadoDTO){
+        try{
+            RespuestaGenerica<String> estadoDelProceso =
+                    service.radicadoActualizado(radicadoDTO.getNumeroRadicado(),radicadoDTO.getEstadoRadicado());
+            if(!TipoRespuesta.SUCCESS.equals(estadoDelProceso.getStatus())){
+                return Response.noContent().entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, estadoDelProceso.getMensaje())).build();
+            }
+            return Response.ok()
+                    .type(MediaType.APPLICATION_JSON)
+                    .entity(estadoDelProceso)
+                    .build();
+        } catch (Exception e) {
+            return Response.noContent().entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", e)).build();
+        }
+    }
+
+    @GET
+    @Path("/listarIncapacidades")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response listarIncapacidadesMesa(){
+        try {
+            List<Incapacidad> incapacidadList
+                    = service.listarIncapacidades()
+                    .getListaResultados()
+                    .stream()
+                    .sorted(Comparator.comparing(Incapacidad::getFechaInicial))
+                    .collect(Collectors.toList());
+            GenericEntity<List<Incapacidad>> incapacidad
+                    = new GenericEntity<List<Incapacidad>>(incapacidadList) {
+            };
+            return Response.ok()
+                    .entity(incapacidad)
+                    .status(Response.Status.OK)
+                    .type(MediaType.APPLICATION_JSON_TYPE)
+                    .build();
+        } catch (Exception e) {
+            return Response.noContent().entity(new RespuestaGenerica<>
+                    (TipoRespuesta.ERROR, "Error No controlado", e)).build();
+        }
+
+    }
+
+    @POST
+    @Path("/crearGers")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response crearGers(ContratoDTO contratoDTO){
+        try {
+            RespuestaGenerica<Integer> gersCreado = service.crearGers(contratoDTO);
+            if(!TipoRespuesta.SUCCESS.equals(gersCreado.getStatus())){
+                return Response.noContent().entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, gersCreado.getMensaje())).build();
+            }
+            return Response.ok()
+                    .type(MediaType.APPLICATION_JSON)
+                    .entity(gersCreado)
+                    .build();
+        } catch (Exception e) {
+            return Response.noContent().entity(new RespuestaGenerica<>
+                    (TipoRespuesta.ERROR, "Error No controlado", e)).build();
+        }
+    }
 }

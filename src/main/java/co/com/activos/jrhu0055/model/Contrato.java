@@ -8,7 +8,6 @@ public class Contrato implements Serializable {
     private String fechaInicio;
     private String fechaRetiro;
     private String fechaFinalizacionContrato;
-
     private String nombreEmpresaPrincipal;
     private String tipoDocumentoEmpresaPrincipal;
     private String numeroDocumentoEmpresaPrincipal;

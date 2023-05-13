@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class DocumentoAlmacenado extends Documento implements Serializable {
     boolean estadoDelProceso;
     private String radicado;
+    
 
 
     public DocumentoAlmacenado(boolean estadoDelProceso , String idDocumento,String nombreDocumento , String radicado) {
