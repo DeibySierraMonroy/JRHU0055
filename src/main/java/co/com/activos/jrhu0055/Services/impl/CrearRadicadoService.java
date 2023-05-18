@@ -44,7 +44,7 @@ public class CrearRadicadoService {
                 }
 
                 RespuestaGenerica<InformacionTaxonomia> crearCarpetaRadicado = construirTaxonomiaParaCarpeta(
-                        new RadicadoDTO(crearRadicado.getObjeto(), creacionCarpetaContrato.getObjeto().getIdAzDigital(),
+                        new RadicadoDTO(crearRadicado.getValorRetorno(), creacionCarpetaContrato.getObjeto().getIdAzDigital(),
                                 creacionCarpetaContrato.getObjeto().getIdDeaCodigo(), radicadoDTO.getNumeroDocumentoEmpleado(),
                                 radicadoDTO.getTipoACargar(), RadicadoDTO.NivelCreacion.NR)
                 );

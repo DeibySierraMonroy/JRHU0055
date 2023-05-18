@@ -13,8 +13,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+
 
 public class IincapacidaesRepo implements IincapacidadService {
 
@@ -70,9 +72,9 @@ public class IincapacidaesRepo implements IincapacidadService {
                 if (Objects.nonNull(resultSet)) {
                     while (resultSet.next()) {
                         TipoIncapacidad tipoIncapacidad = new TipoIncapacidad();
-                        tipoIncapacidad.setCodigoTipoIncapacidad(resultSet.getInt("TIPOINC_CODIGO"));
-                        tipoIncapacidad.setNombreTipoIncapacidad(resultSet.getString("TIPOINC_NOMBRE"));
-                        tipoIncapacidad.setEstado(resultSet.getString("TIPOINC_ESTADO"));
+                        tipoIncapacidad.setCodigoTipoIncapacidad(resultSet.getInt("TIP_CODIGO"));
+                        tipoIncapacidad.setNombreTipoIncapacidad(resultSet.getString("TIP_NOMBRE"));
+                        tipoIncapacidad.setEstado(resultSet.getString("TIP_ESTADO"));
                         tipoIncapacidades.add(tipoIncapacidad);
                     }
                 }
@@ -99,9 +101,9 @@ public class IincapacidaesRepo implements IincapacidadService {
                 if (Objects.nonNull(resultSet)) {
                     while (resultSet.next()) {
                         SubTipoIncapacidad subTipoIncapacidad = new SubTipoIncapacidad();
-                        subTipoIncapacidad.setCodigoSubTipoIncapacidad(resultSet.getInt("SUBTIPOINC_CODIGO"));
-                        subTipoIncapacidad.setNombreSubTipoIncapacidad(resultSet.getString("SUBTIPOINC_NOMBRE"));
-                        subTipoIncapacidad.setEstado(resultSet.getString("SUBTIPOINC_ESTADO"));
+                        subTipoIncapacidad.setCodigoSubTipoIncapacidad(resultSet.getInt("SBT_CODIGO"));
+                        subTipoIncapacidad.setNombreSubTipoIncapacidad(resultSet.getString("SBT_NOMBRE"));
+                        subTipoIncapacidad.setEstado(resultSet.getString("SBT_ESTADO"));
                         subtipoIncapacidades.add(subTipoIncapacidad);
                     }
                 }
@@ -171,7 +173,7 @@ public class IincapacidaesRepo implements IincapacidadService {
                         documentoPorSubtipoIncapacidad.setDescripcionDelDocumento(resultSet.getString("TPD_DESCRIPCION"));
                         documentoPorSubtipoIncapacidad.setRequerido(
                                 documentoPorSubtipoIncapacidad.
-                                        validarSiElDocumentoEsrequerido(resultSet.getString("SUDO_REQUERIDO"))
+                                        validarSiElDocumentoEsrequerido(resultSet.getString("SUD_REQUERIDO"))
                         );
                         documentoPorSubtipoIncapacidades.add(documentoPorSubtipoIncapacidad);
                     }
@@ -365,7 +367,6 @@ public class IincapacidaesRepo implements IincapacidadService {
         }
         return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK");
     }
-
     @Override
     public RespuestaGenerica<DocumentoCargado> documentosCargados(Integer numeroRadicado, String ipDelCliente) {
         List<DocumentoCargado> documentoCargados = new ArrayList<>();
@@ -408,13 +409,12 @@ public class IincapacidaesRepo implements IincapacidadService {
         }
 
     }
-
     @Override
     public RespuestaGenerica<String> actualizarEstadoDocumento(DocumentoActualizadoDTO documentoActualizadoDTO) {
         try ( Connection connection = Conexion.getConnection()) {
             String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_ACTUALIZAR_ESTADO_OBS(?,?,?,?,?,?)}";
             try ( CallableStatement callableStatement = connection.prepareCall(consulta)) {
-                callableStatement.setInt("NMRADICADO", documentoActualizadoDTO.getNumeroRadicado());
+                callableStatement.setDouble("NMRADICADO", documentoActualizadoDTO.getNumeroRadicado());
                 callableStatement.setInt("NMDOCUMENTO", documentoActualizadoDTO.getCodigoDocumento());
                 callableStatement.setString("VCOBSERVACION", documentoActualizadoDTO.getObservacion());
                 callableStatement.setString("VCESTADO", documentoActualizadoDTO.getEstadoDocumento());
@@ -431,7 +431,6 @@ public class IincapacidaesRepo implements IincapacidadService {
             return new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error no controlado en  actualizarEstadoDocumento debido a : " + e.getMessage());
         }
     }
-
     @Override
     public RespuestaGenerica<InformacionTaxonomia> buscarTaxomiaRadicado(Integer numeroRadicado, String flujo) {
         InformacionTaxonomia informacionTaxonomia = new InformacionTaxonomia();
@@ -459,7 +458,6 @@ public class IincapacidaesRepo implements IincapacidadService {
         }
         return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Ok", informacionTaxonomia);
     }
-
     @Override
     public RespuestaGenerica<String> actualizarEstadoRadicacion(Integer numeroRadicado, String estadoActualizar) {
         try ( Connection connection = Conexion.getConnection()) {
@@ -472,7 +470,7 @@ public class IincapacidaesRepo implements IincapacidadService {
                 callableStatement.execute();
                 String estado = callableStatement.getString("VCESTADO_PROCESO");
                 if (!"S".equals(estado)) {
-                    return new RespuestaGenerica<>(TipoRespuesta.WARNING, "No se pudo actualizar el estado del radicado debido a : ",
+                    return new RespuestaGenerica<>(TipoRespuesta.WARNING, "No se pudo actualizar el estado del radicado debido a : " +
                             callableStatement.getString("VCMENSAJE_PROCESO"));
                 }
                 return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK", callableStatement.getString("VCMENSAJE_PROCESO"));
@@ -480,9 +478,7 @@ public class IincapacidaesRepo implements IincapacidadService {
         } catch (SQLException e) {
             return new RespuestaGenerica(TipoRespuesta.ERROR, e.toString());
         }
-
     }
-
     @Override
     public RespuestaGenerica<Incapacidad> listarIncapacidadesMesa() {
         List<Incapacidad> incapacidades = new ArrayList<>();
@@ -505,8 +501,8 @@ public class IincapacidaesRepo implements IincapacidadService {
                         incapacidad.setNombreEmpresa(resultSet.getString("NOMBRE_EMPRESA_USUARIA"));
                         incapacidad.setFechaInicial(resultSet.getString("INC_FECINI"));
                         incapacidad.setFechaRadicacion(resultSet.getString("INC_FECHA_CREACION"));
-                        incapacidad.setTipoIncapacidad(resultSet.getString("TIPOINC_NOMBRE"));
-                        incapacidad.setSubTipoIncapacidad(resultSet.getString("SUBTIPOINC_NOMBRE"));
+                        incapacidad.setTipoIncapacidad(resultSet.getString("TIP_NOMBRE"));
+                        incapacidad.setSubTipoIncapacidad(resultSet.getString("SBT_NOMBRE"));
                         incapacidad.setNumeroDeDias(resultSet.getString("INC_DIAS"));
                         incapacidad.setEstado(resultSet.getString("INC_ESTADO"));
                         incapacidades.add(incapacidad);
@@ -522,6 +518,32 @@ public class IincapacidaesRepo implements IincapacidadService {
             return new RespuestaGenerica(TipoRespuesta.ERROR, e.toString());
         }
 
+    }
+
+    @Override
+    public RespuestaGenerica<?> obtenerEndpointTramaCodAZ(String deaCodigo) {
+        Connection connection = null;
+        try {
+            connection = Conexion.getConnection();
+            CallableStatement callableStatement = connection.prepareCall("call ADM.QB_APP_GESTORDOC.PL_SOLICITAR_ARCHIVO(?,?,?)");
+            callableStatement.setObject("NMID", deaCodigo);
+            callableStatement.registerOutParameter("VCEND_POINT", OracleTypes.VARCHAR);
+            callableStatement.registerOutParameter("VCTRAMAXML", OracleTypes.VARCHAR);
+            callableStatement.execute();
+            String endPoint = callableStatement.getString("VCEND_POINT");
+            String requestBodyXml = callableStatement.getString("VCTRAMAXML");
+            if (Objects.isNull(endPoint) || Objects.isNull(requestBodyXml)) {
+                return new RespuestaGenerica<>(TipoRespuesta.WARNING, "El procedimiento QB_APP_GESTORDOC.PL_FIRMAR_DOCUMENTO, ha retornado valores nulos");
+            }
+            HashMap<String, String> listValues = new HashMap<String, String>() {{
+                put("endPoint", endPoint);
+                put("requestBodyXml", requestBodyXml);
+            }};
+            return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Consulta realizada con exito", listValues);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error no controlado en obtenerEndpointTramaFirma");
+        }
     }
 
     @Override

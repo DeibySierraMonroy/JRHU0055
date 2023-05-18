@@ -5,18 +5,19 @@ import java.util.Optional;
 
 public class DocumentoActualizadoDTO implements Serializable{
 
-    Integer numeroRadicado;
+    Double numeroRadicado;
     Integer codigoDocumento;
     String observacion;
     String estadoDocumento;
 
-    public Integer getNumeroRadicado() {
+    public Double getNumeroRadicado() {
         return numeroRadicado;
     }
 
-    public void setNumeroRadicado(Integer numeroRadicado) {
+    public void setNumeroRadicado(Double numeroRadicado) {
         this.numeroRadicado = numeroRadicado;
     }
+
 
     public Integer getCodigoDocumento() {
         return codigoDocumento;

@@ -25,6 +25,7 @@ public interface IincapacidadService {
     RespuestaGenerica<String> actualizarEstadoRadicacion(Integer numeroRadicado,String estadoActualizar);
     RespuestaGenerica<Incapacidad> listarIncapacidadesMesa();
 
+    RespuestaGenerica<?>  obtenerEndpointTramaCodAZ(String azCodigo);
     RespuestaGenerica<Integer> crearGers(ContratoDTO contratoDTO);
 
 

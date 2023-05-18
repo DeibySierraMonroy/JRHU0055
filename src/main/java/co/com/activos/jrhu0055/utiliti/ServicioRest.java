@@ -13,7 +13,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class ServicioRest {
-    private static final String _URL = "http://localhost:7001/JADM0056/api/rest/document/manager/create";
+    private static final String _URL = "http://eure.activos.com.co:10501/JADM0056/api/rest/document/manager/create";
     public static RespuestaGenerica<InformacionTaxonomia>  crearTaxonomiaIncapacidades(Taxonomia taxonomia) {
         String responseMessage;
         ObjectMapper mapper = new ObjectMapper();

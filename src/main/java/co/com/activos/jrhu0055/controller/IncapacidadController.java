@@ -1,11 +1,13 @@
 package co.com.activos.jrhu0055.controller;
 
 import co.com.activos.jrhu0055.DTO.*;
+import co.com.activos.jrhu0055.Services.impl.ConcatenarPDF;
 import co.com.activos.jrhu0055.Services.impl.CrearRadicadoService;
 import co.com.activos.jrhu0055.Services.impl.IncapacidadService;
 import co.com.activos.jrhu0055.model.*;
 import co.com.activos.jrhu0055.utiliti.RespuestaGenerica;
 import co.com.activos.jrhu0055.utiliti.TipoRespuesta;
+import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -24,6 +26,9 @@ public class IncapacidadController {
 
     @Inject
     private CrearRadicadoService crear;
+
+    @Inject
+    private ConcatenarPDF concatenarPDF;
 
     @POST
     @Path("/listarIncapacidades")
@@ -104,7 +109,7 @@ public class IncapacidadController {
             List<Contrato> listarContratos
                     = service.listaContratos(contratoDTO)
                             .stream()
-                            .sorted(Comparator.comparing(Contrato::getFechaFinalizacionContrato).reversed())
+                            .sorted(Comparator.comparing(Contrato::getNumeroContrato).reversed())
                             .collect(Collectors.toList());
             GenericEntity<List<Contrato>> contratos
                     = new GenericEntity<List<Contrato>>(listarContratos) {
@@ -348,4 +353,21 @@ public class IncapacidadController {
                     (TipoRespuesta.ERROR, "Error No controlado", e)).build();
         }
     }
+
+    @POST
+    @Path("/concatenarDocumentos")
+    public Response concatenarDocumentos(List<String> listaDeDocumentosAUnir ) throws IOException{
+        RespuestaGenerica<?> documentoConcatenado = concatenarPDF.documentosAConcatenar(listaDeDocumentosAUnir);
+        if("ERROR".equals(documentoConcatenado.getStatus())){
+            return Response.noContent()
+                    .status(Response.Status.NOT_FOUND)
+                    .entity(new RespuestaGenerica<>(TipoRespuesta.ERROR,documentoConcatenado.getMensaje()))
+                    .build();
+        }
+        return Response.ok()
+                .type(MediaType.APPLICATION_JSON)
+                .entity(documentoConcatenado.getObjeto())
+                .build();
+    } 
 }
+ 
