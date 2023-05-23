@@ -24,7 +24,6 @@ public interface IincapacidadService {
     RespuestaGenerica<InformacionTaxonomia> buscarTaxomiaRadicado(Integer numeroRadicado , String flujo);
     RespuestaGenerica<String> actualizarEstadoRadicacion(Integer numeroRadicado,String estadoActualizar);
     RespuestaGenerica<Incapacidad> listarIncapacidadesMesa();
-
     RespuestaGenerica<?>  obtenerEndpointTramaCodAZ(String azCodigo);
     RespuestaGenerica<Integer> crearGers(ContratoDTO contratoDTO);
 

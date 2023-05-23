@@ -23,7 +23,7 @@ public class IincapacidaesRepo implements IincapacidadService {
     @Override
     public List<Incapacidad> incapacidades(ContratoDTO contratoDTO) {
         List<Incapacidad> listaIncapacidades = new ArrayList<>();
-        try ( Connection connection = Conexion.getConnection()) {
+        try (Connection connection = Conexion.getConnection()) {
                 String consulta = "call RHU.QB_APLICATION_JRHU0055.PL_OBTENER_INCAPACIDADES_EPL(?,?,?,?,?,?,?)";
             try ( CallableStatement callableStatement = connection.prepareCall(consulta)) {
                 callableStatement.setString("VCTIPODOCUMENTO", contratoDTO.getTipoDocumentoEmpleado());

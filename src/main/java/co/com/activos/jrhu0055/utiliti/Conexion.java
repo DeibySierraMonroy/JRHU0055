@@ -9,7 +9,7 @@ import javax.naming.InitialContext;
 
 public class Conexion {
    // private static final String DATASOURCE_NAME = "test";
-   // private static final String DATASOURCE_NAME = "DS_Intrauser_Acti";
+    private static final String DATASOURCE_NAME = "DS_Intrauser_Acti";
     static Connection conexion;
 
     

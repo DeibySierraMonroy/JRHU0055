@@ -5,7 +5,6 @@ import co.com.activos.jrhu0055.Services.IincapacidadService;
 import co.com.activos.jrhu0055.model.DocumentoAlmacenado;
 import co.com.activos.jrhu0055.model.InformacionTaxonomia;
 import co.com.activos.jrhu0055.model.Taxonomia;
-import co.com.activos.jrhu0055.repo.IincapacidaesRepo;
 import co.com.activos.jrhu0055.utiliti.RespuestaGenerica;
 import co.com.activos.jrhu0055.utiliti.TipoRespuesta;
 
@@ -20,7 +19,6 @@ import static co.com.activos.jrhu0055.utiliti.ServicioRest.crearTaxonomiaIncapac
 public class CrearRadicadoService {
 
     private static final String _FLUJO = "DOCUMENTOS INCAPACIDADES";
-
     private static final String _TIPO_FLUJO = "9";
     private static final String _TIPO_DOCUMENTO = "A";
     private static final String _EXT_DOCUMENTO = ".PDF";
@@ -176,7 +174,6 @@ public class CrearRadicadoService {
     }
 
     private static RespuestaGenerica<DocumentoAlmacenado> extraerRespuesDocumentosProcesados(List<DocumentoAlmacenado> documentoProcesados) {
-        InformacionTaxonomia informacionTaxonomia = new InformacionTaxonomia();
         float documentoFallidos = 0;
         float documentosSubidos = 0;
         if (documentoProcesados.isEmpty()) {

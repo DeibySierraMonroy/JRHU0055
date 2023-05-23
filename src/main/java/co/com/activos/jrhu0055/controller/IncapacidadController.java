@@ -356,6 +356,8 @@ public class IncapacidadController {
 
     @POST
     @Path("/concatenarDocumentos")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public Response concatenarDocumentos(List<String> listaDeDocumentosAUnir ) throws IOException{
         RespuestaGenerica<?> documentoConcatenado = concatenarPDF.documentosAConcatenar(listaDeDocumentosAUnir);
         if("ERROR".equals(documentoConcatenado.getStatus())){
@@ -366,7 +368,7 @@ public class IncapacidadController {
         }
         return Response.ok()
                 .type(MediaType.APPLICATION_JSON)
-                .entity(documentoConcatenado.getObjeto())
+                .entity(documentoConcatenado)
                 .build();
     } 
 }

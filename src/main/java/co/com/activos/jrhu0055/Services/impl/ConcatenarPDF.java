@@ -75,7 +75,7 @@ public class ConcatenarPDF {
         }
         byte[] mergedPdfBytes = outputStream.toByteArray();
         String mergedPdfInBase64 = Base64.getEncoder().encodeToString(mergedPdfBytes);
-        return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Se ha concatenado el documento en base 64", mergedPdfInBase64);
+        return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, mergedPdfInBase64);
     }
 
 

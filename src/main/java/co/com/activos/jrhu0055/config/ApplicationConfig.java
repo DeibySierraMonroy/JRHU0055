@@ -1,7 +1,9 @@
-package co.com.activos.jrhu0055.utiliti;
+package co.com.activos.jrhu0055.config;
 
-import java.util.Set;
+import co.com.activos.jrhu0055.utiliti.CorsFilter;
+
 import javax.ws.rs.core.Application;
+import java.util.Set;
 
 @javax.ws.rs.ApplicationPath("/api/incapacidades")
 public class ApplicationConfig extends Application{
@@ -14,7 +16,7 @@ public class ApplicationConfig extends Application{
     }
 
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(co.com.activos.jrhu0055.utiliti.CorsFilter.class);
+        resources.add(CorsFilter.class);
         resources.add(co.com.activos.jrhu0055.controller.IncapacidadController.class);
     }
 
