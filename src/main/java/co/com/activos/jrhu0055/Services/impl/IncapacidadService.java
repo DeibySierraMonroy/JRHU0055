@@ -50,8 +50,8 @@ public class IncapacidadService {
         return iincapacidadService.actualizarEstadoDocumento(documentoActualizadoDTO);
     }
 
-    public RespuestaGenerica<String>radicadoActualizado(Integer numeroRadicado,String estadoActualizar) {
-        return iincapacidadService.actualizarEstadoRadicacion(numeroRadicado, estadoActualizar);
+    public RespuestaGenerica<String>radicadoActualizado(RadicadoDTO radicadoDTO) {
+        return iincapacidadService.actualizarEstadoRadicacion(radicadoDTO);
     }
 
     public RespuestaGenerica<Incapacidad> listarIncapacidades(){
@@ -60,6 +60,10 @@ public class IncapacidadService {
 
     public RespuestaGenerica<Integer> crearGers(ContratoDTO contratoDTO){
         return iincapacidadService.crearGers(contratoDTO);
+    }
+
+    public RespuestaGenerica<EstadoObservacion> listarEstadoObservacion(){
+        return iincapacidadService.listarEstadosObservcacion();
     }
 
 

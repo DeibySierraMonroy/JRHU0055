@@ -22,10 +22,11 @@ public interface IincapacidadService {
     RespuestaGenerica<DocumentoCargado> documentosCargados(Integer numeroRadicado, String ipDelCliente);
     RespuestaGenerica<String> actualizarEstadoDocumento(DocumentoActualizadoDTO documentoActualizadoDTO);
     RespuestaGenerica<InformacionTaxonomia> buscarTaxomiaRadicado(Integer numeroRadicado , String flujo);
-    RespuestaGenerica<String> actualizarEstadoRadicacion(Integer numeroRadicado,String estadoActualizar);
+    RespuestaGenerica<String> actualizarEstadoRadicacion(RadicadoDTO  radicadoDTO);
     RespuestaGenerica<Incapacidad> listarIncapacidadesMesa();
     RespuestaGenerica<?>  obtenerEndpointTramaCodAZ(String azCodigo);
     RespuestaGenerica<Integer> crearGers(ContratoDTO contratoDTO);
+    RespuestaGenerica<EstadoObservacion> listarEstadosObservcacion();
 
 
 }

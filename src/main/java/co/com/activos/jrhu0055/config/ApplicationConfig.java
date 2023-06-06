@@ -16,8 +16,8 @@ public class ApplicationConfig extends Application{
     }
 
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(CorsFilter.class);
         resources.add(co.com.activos.jrhu0055.controller.IncapacidadController.class);
+        resources.add(co.com.activos.jrhu0055.utiliti.CorsFilter.class);
     }
 
 }

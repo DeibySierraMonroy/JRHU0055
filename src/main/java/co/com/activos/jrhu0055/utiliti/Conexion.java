@@ -22,7 +22,7 @@ public class Conexion {
 //            throw new RuntimeException();
 //        }
 //    }
-    
+  
         public static Connection getConnection(){
         try {
             DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
@@ -30,7 +30,6 @@ public class Conexion {
         } catch (Exception e) {
               System.out.println("Error: " + e);
             throw new RuntimeException();
-
         }
         return conexion;
     }

@@ -19,7 +19,7 @@ import static co.com.activos.jrhu0055.utiliti.ServicioRest.crearTaxonomiaIncapac
 public class CrearRadicadoService {
 
     private static final String _FLUJO = "DOCUMENTOS INCAPACIDADES";
-    private static final String _TIPO_FLUJO = "9";
+    private static final String _TIPO_FLUJO = "9";  
     private static final String _TIPO_DOCUMENTO = "A";
     private static final String _EXT_DOCUMENTO = ".PDF";
 
@@ -60,9 +60,13 @@ public class CrearRadicadoService {
                     return new RespuestaGenerica<>(TipoRespuesta.ERROR,
                             cargarDocumentos.getMensaje());
                 }
-                return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, crearRadicado.getValorRetorno().toString(),
-                         cargarDocumentos.getResultadoSubidaDocumentos(),
-                         cargarDocumentos.getListaResultados());
+                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, crearRadicado.getValorRetorno().toString(),
+                         Objects.isNull(cargarDocumentos.getResultadoSubidaDocumentos()) ?
+                                 "Radicado sin documentos" :
+                                 cargarDocumentos.getResultadoSubidaDocumentos(),
+                         Objects.isNull(cargarDocumentos.getListaResultados()) ?
+                                 new ArrayList<>():
+                                         cargarDocumentos.getListaResultados());
             }
             return new RespuestaGenerica<>(TipoRespuesta.ERROR,
                     "No se puede procesar el radicado , revise la informacion a radicar.");
@@ -177,9 +181,7 @@ public class CrearRadicadoService {
         float documentoFallidos = 0;
         float documentosSubidos = 0;
         if (documentoProcesados.isEmpty()) {
-            return new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error al extraer la respuesta en" +
-                    " IncapacidadService:extraerRespuesDocumentosProcesados debido a"
-                    + "que la lista no tiene valores a procesar");
+            return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK");
         }
         documentoFallidos = documentoProcesados.stream().filter(documentoAlmacenado -> !documentoAlmacenado.getEstadoDelProceso()).count();
         documentosSubidos = documentoProcesados.stream().filter(documentoAlmacenado -> documentoAlmacenado.getEstadoDelProceso()).count();

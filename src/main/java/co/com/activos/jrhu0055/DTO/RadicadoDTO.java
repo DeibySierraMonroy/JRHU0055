@@ -43,6 +43,8 @@ public class RadicadoDTO implements Serializable {
 
     private String fechaFueroMaterno;
 
+    private String observacion;
+
     public RadicadoDTO() {
     }
 
@@ -274,6 +276,14 @@ public class RadicadoDTO implements Serializable {
 
     public String getEstadoRadicado() {
         return estadoRadicado;
+    }
+
+    public String getObservacion() {
+        return observacion;
+    }
+
+    public void setObservacion(String observacion) {
+        this.observacion = observacion;
     }
 
     public void setEstadoRadicado(String estadoRadicado) {

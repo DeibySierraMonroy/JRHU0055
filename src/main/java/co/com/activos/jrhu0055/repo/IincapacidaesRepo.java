@@ -48,6 +48,8 @@ public class IincapacidaesRepo implements IincapacidadService {
                     incapacidad.setSubTipoIncapacidad(resultSet.getString("SUB_TIPO_INCAPACIDAD"));
                     incapacidad.setNumeroRadicado(resultSet.getInt("INC_RADICACION"));
                     incapacidad.setFechaDeRadicacion(resultSet.getString("INC_FECHA_CREACION"));
+                    incapacidad.setEstadoSitioDelTrabajador(resultSet.getString("ESTADO_SITIO"));
+                    incapacidad.setEstadoObservacion(resultSet.getString("ESTADO_OBSERVACION"));
                     listaIncapacidades.add(incapacidad);
                 }
                 callableStatement.close();
@@ -459,12 +461,13 @@ public class IincapacidaesRepo implements IincapacidadService {
         return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Ok", informacionTaxonomia);
     }
     @Override
-    public RespuestaGenerica<String> actualizarEstadoRadicacion(Integer numeroRadicado, String estadoActualizar) {
+    public RespuestaGenerica<String> actualizarEstadoRadicacion(RadicadoDTO radicadoDTO) {
         try ( Connection connection = Conexion.getConnection()) {
-            String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_ACTUALIZAR_EST_RADICADO(?,?,?,?)}";
+            String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_ACTUALIZAR_EST_RADICADO(?,?,?,?,?)}";
             try ( CallableStatement callableStatement = connection.prepareCall(consulta)) {
-                callableStatement.setInt("NMRADICADO", numeroRadicado);
-                callableStatement.setString("VCESTADO", estadoActualizar);
+                callableStatement.setInt("NMRADICADO", radicadoDTO.getNumeroRadicado());
+                callableStatement.setString("VCESTADO", radicadoDTO.getEstadoRadicado());
+                callableStatement.setString("VCDESCRIP", radicadoDTO.getObservacion());
                 callableStatement.registerOutParameter("VCESTADO_PROCESO", OracleTypes.VARCHAR);
                 callableStatement.registerOutParameter("VCMENSAJE_PROCESO", OracleTypes.VARCHAR);
                 callableStatement.execute();
@@ -571,5 +574,36 @@ public class IincapacidaesRepo implements IincapacidadService {
         } catch (SQLException e) {
             return new RespuestaGenerica(TipoRespuesta.ERROR, e.toString());
         }
+    }
+
+    @Override
+    public RespuestaGenerica<EstadoObservacion> listarEstadosObservcacion() {
+        List<EstadoObservacion> estadosObservacion = new ArrayList<>();
+        try(Connection connection = Conexion.getConnection()){
+            String consulta = "{call RHU.QB_APLICATION_JRHU0055.PL_LISTAR_ESTADO_SITIO(?,?,?)}";
+            try(CallableStatement callableStatement = connection.prepareCall(consulta)){
+                callableStatement.registerOutParameter("RCESTADO",OracleTypes.CURSOR);
+                callableStatement.registerOutParameter("VCESTADO_PROCESO",OracleTypes.VARCHAR);
+                callableStatement.registerOutParameter("VCMENSAJE_PROCESO",OracleTypes.VARCHAR);
+                callableStatement.execute();
+                String mensajeProceso = callableStatement.getString("VCESTADO_PROCESO");
+                
+                if("S".equals(mensajeProceso)){
+                    ResultSet resultSet = (ResultSet) callableStatement.getObject("RCESTADO");
+                    while (resultSet.next()){
+                        EstadoObservacion estadoObservacion = new EstadoObservacion();
+                        estadoObservacion.setEstado(resultSet.getString("OBS_ESTADO"));
+                        estadoObservacion.setDescripcion(resultSet.getString("OBS_DESCRIPCION"));
+                        estadoObservacion.setTipo(resultSet.getString("OBS_TIPO"));
+                        estadosObservacion.add(estadoObservacion);
+                    }
+                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS,"ok",estadosObservacion);
+                }
+                return new RespuestaGenerica<>(TipoRespuesta.WARNING,"No se obtuvo la lista de estados",estadosObservacion);
+            }
+        } catch (SQLException e) {
+            return new RespuestaGenerica(TipoRespuesta.ERROR, e.toString());
+        }
+
     }
 }

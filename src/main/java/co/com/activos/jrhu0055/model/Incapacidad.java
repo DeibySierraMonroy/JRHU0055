@@ -16,6 +16,9 @@ public class Incapacidad {
   private String fechaRadicacion;
   private String estado;
 
+  private String estadoSitioDelTrabajador;
+  private String estadoObservacion;
+
   private String numeroDeDias;
 
   private String nombreDelEmpleado;
@@ -155,6 +158,22 @@ public class Incapacidad {
 
     public String getNumeroDeDias() {
         return numeroDeDias;
+    }
+
+    public String getEstadoSitioDelTrabajador() {
+        return estadoSitioDelTrabajador;
+    }
+
+    public void setEstadoSitioDelTrabajador(String estadoSitioDelTrabajador) {
+        this.estadoSitioDelTrabajador = estadoSitioDelTrabajador;
+    }
+
+    public String getEstadoObservacion() {
+        return estadoObservacion;
+    }
+
+    public void setEstadoObservacion(String estadoObservacion) {
+        this.estadoObservacion = estadoObservacion;
     }
 
     public void setNumeroDeDias(String numeroDeDias) {
