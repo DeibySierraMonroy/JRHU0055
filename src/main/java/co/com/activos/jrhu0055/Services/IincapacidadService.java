@@ -28,5 +28,7 @@ public interface IincapacidadService {
     RespuestaGenerica<Integer> crearGers(ContratoDTO contratoDTO);
     RespuestaGenerica<EstadoObservacion> listarEstadosObservcacion();
 
+    RespuestaGenerica<ObservacionRadicado> listarObservacionesPorRadicado(Integer numRadicado);
+
 
 }

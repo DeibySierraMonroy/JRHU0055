@@ -67,4 +67,8 @@ public class IncapacidadService {
     }
 
 
+    public RespuestaGenerica<ObservacionRadicado> listarObservacionesPorRadicado(Integer numeroRadicado){
+        return iincapacidadService.listarObservacionesPorRadicado(numeroRadicado);
+    }
+
 }

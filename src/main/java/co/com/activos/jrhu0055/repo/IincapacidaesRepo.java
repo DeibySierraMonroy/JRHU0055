@@ -606,4 +606,38 @@ public class IincapacidaesRepo implements IincapacidadService {
         }
 
     }
+
+    @Override
+    public RespuestaGenerica<ObservacionRadicado> listarObservacionesPorRadicado(Integer numRadicado) {
+        List<ObservacionRadicado> observacionRadicado = new ArrayList<>();
+        try(Connection connection = Conexion.getConnection()){
+            String consulta = "{call RHU.QB_APLICATION_JRHU0055.PL_OBSERVACION_POR_RADICADO(?,?,?,?)}";
+            try(CallableStatement callableStatement = connection.prepareCall(consulta)){
+                callableStatement.setInt("NMIN_RADICACION ",numRadicado);
+                callableStatement.registerOutParameter("RCINC",OracleTypes.CURSOR);
+                callableStatement.registerOutParameter("VCESTADO_PROCESO",OracleTypes.VARCHAR);
+                callableStatement.registerOutParameter("VCMENSAJE_PROCESO",OracleTypes.VARCHAR);
+                callableStatement.execute();
+                String mensajeProceso = callableStatement.getString("VCESTADO_PROCESO");
+
+                if("S".equals(mensajeProceso)){
+                    ResultSet resultSet = (ResultSet) callableStatement.getObject("RCINC");
+                    while (resultSet.next()){
+                        ObservacionRadicado estadoObservacion = new ObservacionRadicado();
+                        estadoObservacion.setNumeroRadicado(resultSet.getInt("INC_RADICACION"));
+                        estadoObservacion.setNumObservacion(resultSet.getInt("OBS_SECUENCIA"));
+                        estadoObservacion.setDescripcion(resultSet.getString("OBS_DESCRIPCION"));
+                        estadoObservacion.setUsuario(resultSet.getString("OBS_USUARIO"));
+                        estadoObservacion.setFecha(resultSet.getString("OBS_FECHA"));
+                        estadoObservacion.setEstado(resultSet.getString("OBS_ESTADO"));
+                        observacionRadicado.add(estadoObservacion);
+                    }
+                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS,"ok",observacionRadicado);
+                }
+                return new RespuestaGenerica<>(TipoRespuesta.WARNING,"No se obtuvo la lista de Observaciones",observacionRadicado);
+            }
+        } catch (SQLException e) {
+            return new RespuestaGenerica(TipoRespuesta.ERROR, e.toString());  
+        }
+        }
 }
