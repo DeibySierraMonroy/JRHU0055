@@ -17,19 +17,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-
 public class IincapacidaesRepo implements IincapacidadService {
 
     @Override
     public List<Incapacidad> incapacidades(ContratoDTO contratoDTO) {
         List<Incapacidad> listaIncapacidades = new ArrayList<>();
         try (Connection connection = Conexion.getConnection()) {
-                String consulta = "call RHU.QB_APLICATION_JRHU0055.PL_OBTENER_INCAPACIDADES_EPL(?,?,?,?,?,?,?)";
-            try ( CallableStatement callableStatement = connection.prepareCall(consulta)) {
-                callableStatement.setString("VCTIPODOCUMENTO", contratoDTO.getTipoDocumentoEmpleado());
-                callableStatement.setInt("NMDOCUMENTO", contratoDTO.getDocumentoEmpleado());
-                callableStatement.setString("VCTIPODOCUMENTOEMPRE", contratoDTO.getTipoDocumentoEmpresa());
-                callableStatement.setInt("NMDOCUMENTOPRINCIPAL", contratoDTO.getDocumentoEmpresa());
+            String consulta = "call RHU.QB_APLICATION_JRHU0055.PL_OBTENER_INCAPACIDADES_CPT(?,?,?,?,?,?,?)";
+            try (CallableStatement callableStatement = connection.prepareCall(consulta)) {
+                callableStatement.setString("VCTDC_TD_EPL", contratoDTO.getTipoDocumentoEmpleado());
+                callableStatement.setInt("NMEPL_ND", contratoDTO.getDocumentoEmpleado());
+                callableStatement.setString("VCTDC_TD_PAL", contratoDTO.getTipoDocumentoEmpresa());
+                callableStatement.setInt("NMEMP_ND_PAL", contratoDTO.getDocumentoEmpresa());
                 callableStatement.registerOutParameter("RCINC", OracleTypes.CURSOR);
                 callableStatement.registerOutParameter("VCESTADO_PROCESO", OracleTypes.VARCHAR);
                 callableStatement.registerOutParameter("VCMENSAJE_PROCESO", OracleTypes.VARCHAR);
@@ -38,18 +37,24 @@ public class IincapacidaesRepo implements IincapacidadService {
                 ResultSet resultSet = (ResultSet) callableStatement.getObject("RCINC");
                 while (resultSet.next()) {
                     Incapacidad incapacidad = new Incapacidad();
-                    incapacidad.setEstado(resultSet.getString("INC_ESTADO"));
-                    incapacidad.setNumeroContrato(resultSet.getInt("CTO_NUMERO"));
-                    incapacidad.setSigla(resultSet.getString("TEN_SIGLA"));
-                    incapacidad.setFechaFinal(resultSet.getString("INC_FECFIN"));
+                    incapacidad.setNumeroRadicado(resultSet.getInt("RADICADO_INC"));
+                    incapacidad.setNumeroDocumentoEmpleado(resultSet.getInt("NRO_DOC_TRABAJADOR"));
+                    incapacidad.setNumeroContrato(resultSet.getInt("CONTRATO_TRABAJADOR"));
+                    incapacidad.setNombreDelEmpleado(resultSet.getString("EMPLEADO"));
+                    incapacidad.setNombreEmpresa(resultSet.getString("NOM_PPAL"));
                     incapacidad.setFechaInicial(resultSet.getString("INC_FECINI"));
-                    incapacidad.setNombreEmpresa(resultSet.getString("NOMBRE_EMPRESA_PRINCIPAL"));
-                    incapacidad.setTipoIncapacidad(resultSet.getString("TIPO_INCAPACIDAD"));
-                    incapacidad.setSubTipoIncapacidad(resultSet.getString("SUB_TIPO_INCAPACIDAD"));
-                    incapacidad.setNumeroRadicado(resultSet.getInt("INC_RADICACION"));
-                    incapacidad.setFechaDeRadicacion(resultSet.getString("INC_FECHA_CREACION"));
-                    incapacidad.setEstadoSitioDelTrabajador(resultSet.getString("ESTADO_SITIO"));
+                    incapacidad.setFechaRadicacion(resultSet.getString("INC_FECHA_CREACION"));
+                    incapacidad.setSubTipoIncapacidad(resultSet.getString("SBT_NOMBRE"));
+                    incapacidad.setSubTipoIncapacidadCodigo(resultSet.getInt("SBT_CODIGO"));
+                    incapacidad.setNumeroDeDias(resultSet.getString("DIAS_INCAPACIDAD"));
+                    incapacidad.setEstado(resultSet.getString("INC_ESTADO"));
                     incapacidad.setEstadoObservacion(resultSet.getString("ESTADO_OBSERVACION"));
+                    incapacidad.setTipoDocumentoEmpleado(resultSet.getString("TIPO_DOC_TRABAJADOR"));
+                    incapacidad.setTipoIncapacidad(resultSet.getString("INC_CONTIN"));
+                    incapacidad.setIncapacidadDescripcion(resultSet.getString("INC_DESCRIPCION"));
+                    incapacidad.setEstadoObservacionTrabajador(resultSet.getString("ESTADO_OBSERVACION_TRAB"));
+                    incapacidad.setNombreEps(resultSet.getString("NOMBRE_EPS"));
+                    incapacidad.setFechaFinal(resultSet.getString("FECHA_FINAL_INCAP"));
                     listaIncapacidades.add(incapacidad);
                 }
                 callableStatement.close();
@@ -63,9 +68,9 @@ public class IincapacidaesRepo implements IincapacidadService {
     @Override
     public List<TipoIncapacidad> listarTipoIncapacidades() {
         List<TipoIncapacidad> tipoIncapacidades = new ArrayList<>();
-        try ( Connection connection = Conexion.getConnection()) {
+        try (Connection connection = Conexion.getConnection()) {
             String consulta = "call RHU.QB_APLICATION_JRHU0055.PL_OBTENER_TIP_INCAPACIDAD(?,?,?)";
-            try ( CallableStatement callableStatement = connection.prepareCall(consulta)) {
+            try (CallableStatement callableStatement = connection.prepareCall(consulta)) {
                 callableStatement.registerOutParameter("RTIPINCAPACIDAD", OracleTypes.CURSOR);
                 callableStatement.registerOutParameter("VCESTADO_PROCESO", OracleTypes.VARCHAR);
                 callableStatement.registerOutParameter("VCMENSAJE_PROCESO", OracleTypes.VARCHAR);
@@ -91,9 +96,9 @@ public class IincapacidaesRepo implements IincapacidadService {
     @Override
     public List<SubTipoIncapacidad> listarSubTipoIncapacidades(Integer codigoTipoIncapacidad) {
         List<SubTipoIncapacidad> subtipoIncapacidades = new ArrayList<>();
-        try ( Connection connection = Conexion.getConnection()) {
+        try (Connection connection = Conexion.getConnection()) {
             String consulta = "call RHU.QB_APLICATION_JRHU0055.PL_OBTENER_SUBTIP_INCAPACIDAD(?,?,?,?)";
-            try ( CallableStatement callableStatement = connection.prepareCall(consulta)) {
+            try (CallableStatement callableStatement = connection.prepareCall(consulta)) {
                 callableStatement.setInt("NTIPOINC", codigoTipoIncapacidad);
                 callableStatement.registerOutParameter("RSUBINCAPACIDAD", OracleTypes.CURSOR);
                 callableStatement.registerOutParameter("VCESTADO_PROCESO", OracleTypes.VARCHAR);
@@ -120,9 +125,9 @@ public class IincapacidaesRepo implements IincapacidadService {
     @Override
     public List<Contrato> listarContratos(ContratoDTO contratoDTO) {
         List<Contrato> contratos = new ArrayList<>();
-        try ( Connection connection = Conexion.getConnection()) {
+        try (Connection connection = Conexion.getConnection()) {
             String consulta = "call RHU.QB_APLICATION_JRHU0055.PL_OBTENER_CONTRATOS(?,?,?,?,?,?,?)";
-            try ( CallableStatement callableStatement = connection.prepareCall(consulta)) {
+            try (CallableStatement callableStatement = connection.prepareCall(consulta)) {
                 callableStatement.setString("VTDC_TD_EPL", contratoDTO.getTipoDocumentoEmpleado());
                 callableStatement.setInt("NEPL_ND", contratoDTO.getDocumentoEmpleado());
                 callableStatement.setInt("NEMP_ND", contratoDTO.getDocumentoEmpresa());
@@ -159,9 +164,9 @@ public class IincapacidaesRepo implements IincapacidadService {
     @Override
     public List<DocumentoPorSubtipoIncapacidad> listarDocumentos(Integer codigoSubTipoIncapacidad) {
         List<DocumentoPorSubtipoIncapacidad> documentoPorSubtipoIncapacidades = new ArrayList<>();
-        try ( Connection connection = Conexion.getConnection()) {
+        try (Connection connection = Conexion.getConnection()) {
             String consulta = "call RHU.QB_APLICATION_JRHU0055.PL_OBTENER_DOCUM_SUBTIP(?,?,?,?)";
-            try ( CallableStatement callableStatement = connection.prepareCall(consulta)) {
+            try (CallableStatement callableStatement = connection.prepareCall(consulta)) {
                 callableStatement.setInt("NSUBTIPOINC", codigoSubTipoIncapacidad);
                 callableStatement.registerOutParameter("RDOCUMENSUBTIPO", OracleTypes.CURSOR);
                 callableStatement.registerOutParameter("VCESTADO_PROCESO", OracleTypes.VARCHAR);
@@ -192,9 +197,9 @@ public class IincapacidaesRepo implements IincapacidadService {
     @Override
     public InformacionTaxonomia obtenerInformacionTaxonomia(String deaCodigo, String nombreCarpeta) {
         InformacionTaxonomia informacionTaxonomia = new InformacionTaxonomia();
-        try ( Connection conexion = Conexion.getConnection()) {
+        try (Connection conexion = Conexion.getConnection()) {
             String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_BUSCAR_TAX_INCA_INTER(?,?,?,?,?,?)}";
-            try ( CallableStatement call = conexion.prepareCall(consulta)) {
+            try (CallableStatement call = conexion.prepareCall(consulta)) {
                 call.setString("NDESCRIP", nombreCarpeta);
                 call.setLong("NMDEACODIGO", Long.parseLong(deaCodigo));
                 call.registerOutParameter("NMDEAPADRE", OracleTypes.NUMBER);
@@ -220,9 +225,9 @@ public class IincapacidaesRepo implements IincapacidadService {
     @Override
     public RespuestaGenerica<Enfermedad> listarEnfermedades() {
         List<Enfermedad> listaDeEnfermedades = new ArrayList<>();
-        try ( Connection connection = Conexion.getConnection()) {
+        try (Connection connection = Conexion.getConnection()) {
             String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_OBTENER_ENFERMEDAD(?,?,?)}";
-            try ( CallableStatement callableStatement = connection.prepareCall(consulta)) {
+            try (CallableStatement callableStatement = connection.prepareCall(consulta)) {
                 callableStatement.registerOutParameter("RSGPENFER", OracleTypes.CURSOR);
                 callableStatement.registerOutParameter("VCESTADO_PROCESO", OracleTypes.VARCHAR);
                 callableStatement.registerOutParameter("VCMENSAJE_PROCESO", OracleTypes.VARCHAR);
@@ -254,9 +259,9 @@ public class IincapacidaesRepo implements IincapacidadService {
     @Override
     public RespuestaGenerica<TerminosYCondiciones> obtenerTerminosYCondiciones() {
         TerminosYCondiciones terminosYCondiciones = new TerminosYCondiciones();
-        try ( Connection connection = Conexion.getConnection()) {
+        try (Connection connection = Conexion.getConnection()) {
             String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_OBTENER_TERMINOSYCOND(?,?,?)}";
-            try ( CallableStatement callableStatement = connection.prepareCall(consulta)) {
+            try (CallableStatement callableStatement = connection.prepareCall(consulta)) {
                 callableStatement.registerOutParameter("RTERMINO", OracleTypes.CURSOR);
                 callableStatement.registerOutParameter("VCESTADO_PROCESO", OracleTypes.VARCHAR);
                 callableStatement.registerOutParameter("VCMENSAJE_PROCESO", OracleTypes.VARCHAR);
@@ -280,9 +285,9 @@ public class IincapacidaesRepo implements IincapacidadService {
 
     @Override
     public RespuestaGenerica<Boolean> actualizarEstadoDocumento(Integer deaCodigo, Integer numeroRadico, Integer codigoDocumento) {
-        try ( Connection connection = Conexion.getConnection()) {
+        try (Connection connection = Conexion.getConnection()) {
             String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_ACTUALIZAR_DOCUMENTO(?,?,?,?,?)}";
-            try ( CallableStatement callableStatement = connection.prepareCall(consulta)) {
+            try (CallableStatement callableStatement = connection.prepareCall(consulta)) {
                 callableStatement.setInt("NMDEACODIGO", deaCodigo);
                 callableStatement.setInt("NMRADICADO", numeroRadico);
                 callableStatement.setInt("NMDOCUMENTO", codigoDocumento);
@@ -303,9 +308,9 @@ public class IincapacidaesRepo implements IincapacidadService {
 
     @Override
     public RespuestaGenerica<Integer> crearRadicado(RadicadoDTO radicadoDTO) {
-        try ( Connection connection = Conexion.getConnection()) {
+        try (Connection connection = Conexion.getConnection()) {
             String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_CREAR_RADICADO(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
-            try ( CallableStatement callableStatement = connection.prepareCall(consulta)) {
+            try (CallableStatement callableStatement = connection.prepareCall(consulta)) {
                 callableStatement.setString("VCTDOCUMENTO", radicadoDTO.getTipoDocumentoEmpleado());
                 callableStatement.setInt("NMDOCUMENTO", radicadoDTO.getNumeroDocumentoEmpleado());
                 callableStatement.setInt("NMEMPPRINCIPAL", radicadoDTO.getNumeroDocumentoEmpresaPrincipal());
@@ -329,25 +334,26 @@ public class IincapacidaesRepo implements IincapacidadService {
                 callableStatement.execute();
                 String mensaje = callableStatement.getString("VCMENSAJE_PROCESO");
                 if ("S".equals(callableStatement.getString("VCESTADO_PROCESO"))) {
-                 Integer numeroRadicado = callableStatement.getInt("NMRADICADO");
+                    Integer numeroRadicado = callableStatement.getInt("NMRADICADO");
                     return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK",
                             numeroRadicado);
                 }
                 callableStatement.close();
-                return new RespuestaGenerica<>(TipoRespuesta.WARNING, "FALLO AL CREAR EL RADICADO " + mensaje);
+                return new RespuestaGenerica<>(TipoRespuesta.WARNING, mensaje);
             }
         } catch (SQLException e) {
             return new RespuestaGenerica<>(TipoRespuesta.ERROR, "IincapacidaesRepo::crearRadicado DEBIDO A : " + e);
         }
+        //return null;
     }
 
     @Override
     public RespuestaGenerica<String> validacionRadicado(ValidacionRadicadoDTO validacionRadicadoDTO) {
         String estadoProceso = "";
         String mensajeProceso = "";
-        try ( Connection connection = Conexion.getConnection()) {
-            String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_VALIDACION_RADICADO(?,?,?,?,?,?,?,?,?)}";
-            try ( CallableStatement callableStatement = connection.prepareCall(consulta)) {
+        try (Connection connection = Conexion.getConnection()) {
+            String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_VALIDACION_RADICADO(?,?,?,?,?,?,?,?,?,?,?)}";
+            try (CallableStatement callableStatement = connection.prepareCall(consulta)) {
                 callableStatement.setString("VCFECHAINICIO", validacionRadicadoDTO.getFechaInicio());
                 callableStatement.setInt("NMDOCUMENTOEPL", validacionRadicadoDTO.getContratoDTO().getDocumentoEmpleado());
                 callableStatement.setInt("NMCONTRATO", validacionRadicadoDTO.getNumeroContrato());
@@ -355,6 +361,8 @@ public class IincapacidaesRepo implements IincapacidadService {
                 callableStatement.setString("VCTIPDOCUMEEPL", validacionRadicadoDTO.getContratoDTO().getTipoDocumentoEmpleado());
                 callableStatement.setInt("NMDOCUMENTOPAL", validacionRadicadoDTO.getContratoDTO().getDocumentoEmpresa());
                 callableStatement.setString("VCTIPODOCUMPAL", validacionRadicadoDTO.getContratoDTO().getTipoDocumentoEmpresa());
+                callableStatement.setInt("NMCONTINCA", validacionRadicadoDTO.getIdContigenciaIncapacidad());
+                callableStatement.setString("VCFECHA_INCIDENTE", validacionRadicadoDTO.getFechaAccidente());
                 callableStatement.registerOutParameter("VCESTADO_PROCESO", OracleTypes.VARCHAR);
                 callableStatement.registerOutParameter("VCMENSAJE_PROCESO", OracleTypes.VARCHAR);
                 callableStatement.execute();
@@ -369,12 +377,13 @@ public class IincapacidaesRepo implements IincapacidadService {
         }
         return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK");
     }
+
     @Override
     public RespuestaGenerica<DocumentoCargado> documentosCargados(Integer numeroRadicado, String ipDelCliente) {
         List<DocumentoCargado> documentoCargados = new ArrayList<>();
-        try ( Connection connection = Conexion.getConnection()) {
+        try (Connection connection = Conexion.getConnection()) {
             String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_LISTAR_DOCUMENTOS(?,?,?,?,?)}";
-            try ( CallableStatement callableStatement = connection.prepareCall(consulta)) {
+            try (CallableStatement callableStatement = connection.prepareCall(consulta)) {
                 callableStatement.setString("VCIPCLIENTE", ipDelCliente);
                 callableStatement.setInt("NMRADICADO", numeroRadicado);
 
@@ -403,7 +412,7 @@ public class IincapacidaesRepo implements IincapacidadService {
                 }
                 return new RespuestaGenerica<>(TipoRespuesta.WARNING, "Fallo la consulta debido a : "
                         + callableStatement.getString("VCMENSAJE_PROCESO"),
-                         documentoCargados);
+                        documentoCargados);
             }
 
         } catch (SQLException e) {
@@ -411,11 +420,12 @@ public class IincapacidaesRepo implements IincapacidadService {
         }
 
     }
+
     @Override
     public RespuestaGenerica<String> actualizarEstadoDocumento(DocumentoActualizadoDTO documentoActualizadoDTO) {
-        try ( Connection connection = Conexion.getConnection()) {
+        try (Connection connection = Conexion.getConnection()) {
             String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_ACTUALIZAR_ESTADO_OBS(?,?,?,?,?,?)}";
-            try ( CallableStatement callableStatement = connection.prepareCall(consulta)) {
+            try (CallableStatement callableStatement = connection.prepareCall(consulta)) {
                 callableStatement.setDouble("NMRADICADO", documentoActualizadoDTO.getNumeroRadicado());
                 callableStatement.setInt("NMDOCUMENTO", documentoActualizadoDTO.getCodigoDocumento());
                 callableStatement.setString("VCOBSERVACION", documentoActualizadoDTO.getObservacion());
@@ -433,12 +443,13 @@ public class IincapacidaesRepo implements IincapacidadService {
             return new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error no controlado en  actualizarEstadoDocumento debido a : " + e.getMessage());
         }
     }
+
     @Override
     public RespuestaGenerica<InformacionTaxonomia> buscarTaxomiaRadicado(Integer numeroRadicado, String flujo) {
         InformacionTaxonomia informacionTaxonomia = new InformacionTaxonomia();
-        try ( Connection conexion = Conexion.getConnection()) {
+        try (Connection conexion = Conexion.getConnection()) {
             String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_VALIDAR_TAXRADICADO(?,?,?,?,?,?)}";
-            try ( CallableStatement call = conexion.prepareCall(consulta)) {
+            try (CallableStatement call = conexion.prepareCall(consulta)) {
                 call.setString("NMRADICADO", String.valueOf(numeroRadicado));
                 call.setString("VCFLUJO", flujo);
                 call.registerOutParameter("NMDEAPADRE", OracleTypes.NUMBER);
@@ -460,11 +471,12 @@ public class IincapacidaesRepo implements IincapacidadService {
         }
         return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Ok", informacionTaxonomia);
     }
-    @Override
+
+        @Override
     public RespuestaGenerica<String> actualizarEstadoRadicacion(RadicadoDTO radicadoDTO) {
-        try ( Connection connection = Conexion.getConnection()) {
+        try (Connection connection = Conexion.getConnection()) {
             String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_ACTUALIZAR_EST_RADICADO(?,?,?,?,?)}";
-            try ( CallableStatement callableStatement = connection.prepareCall(consulta)) {
+            try (CallableStatement callableStatement = connection.prepareCall(consulta)) {
                 callableStatement.setInt("NMRADICADO", radicadoDTO.getNumeroRadicado());
                 callableStatement.setString("VCESTADO", radicadoDTO.getEstadoRadicado());
                 callableStatement.setString("VCDESCRIP", radicadoDTO.getObservacion());
@@ -472,9 +484,10 @@ public class IincapacidaesRepo implements IincapacidadService {
                 callableStatement.registerOutParameter("VCMENSAJE_PROCESO", OracleTypes.VARCHAR);
                 callableStatement.execute();
                 String estado = callableStatement.getString("VCESTADO_PROCESO");
+                String error = callableStatement.getString("VCMENSAJE_PROCESO");
                 if (!"S".equals(estado)) {
-                    return new RespuestaGenerica<>(TipoRespuesta.WARNING, "No se pudo actualizar el estado del radicado debido a : " +
-                            callableStatement.getString("VCMENSAJE_PROCESO"));
+                    return new RespuestaGenerica<>(TipoRespuesta.WARNING, "No se pudo actualizar el estado del radicado debido a : "
+                            + callableStatement.getString("VCMENSAJE_PROCESO"));
                 }
                 return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK", callableStatement.getString("VCMENSAJE_PROCESO"));
             }
@@ -482,39 +495,49 @@ public class IincapacidaesRepo implements IincapacidadService {
             return new RespuestaGenerica(TipoRespuesta.ERROR, e.toString());
         }
     }
+
     @Override
     public RespuestaGenerica<Incapacidad> listarIncapacidadesMesa() {
         List<Incapacidad> incapacidades = new ArrayList<>();
-        try(Connection connection = Conexion.getConnection()){
+        try (Connection connection = Conexion.getConnection()) {
             String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_OBTENER_INCAPACIDADES_CPT(?,?,?)}";
-            try(CallableStatement callableStatement = connection.prepareCall(consulta)){
-               callableStatement.registerOutParameter("VCESTADO_PROCESO", OracleTypes.VARCHAR);
+            try (CallableStatement callableStatement = connection.prepareCall(consulta)) {
+                callableStatement.registerOutParameter("VCESTADO_PROCESO", OracleTypes.VARCHAR);
                 callableStatement.registerOutParameter("VCMENSAJE_PROCESO", OracleTypes.VARCHAR);
                 callableStatement.registerOutParameter("RCINC", OracleTypes.CURSOR);
                 callableStatement.execute();
                 String estado = callableStatement.getString("VCESTADO_PROCESO");
-                if("S".equals(estado)){
+                if ("S".equals(estado)) {
                     ResultSet resultSet = (ResultSet) callableStatement.getObject("RCINC");
-                    while (resultSet.next()){
+                    while (resultSet.next()) {
                         Incapacidad incapacidad = new Incapacidad();
-                        incapacidad.setNumeroRadicado(resultSet.getInt("INC_RADICACION"));
-                        incapacidad.setNumeroDocumentoEmpleado(resultSet.getInt("EPL_ND"));
-                        incapacidad.setNumeroContrato(resultSet.getInt("CTO_NUMERO"));
-                        incapacidad.setNombreDelEmpleado(resultSet.getString("NOMBRE_COMPLETO"));
-                        incapacidad.setNombreEmpresa(resultSet.getString("NOMBRE_EMPRESA_USUARIA"));
+                        incapacidad.setNumeroRadicado(resultSet.getInt("RADICADO_INC"));
+                        incapacidad.setNumeroDocumentoEmpleado(resultSet.getInt("NRO_DOC_TRABAJADOR"));
+                        incapacidad.setNumeroContrato(resultSet.getInt("CONTRATO_TRABAJADOR"));
+                        incapacidad.setNombreDelEmpleado(resultSet.getString("EMPLEADO"));
+                        incapacidad.setNombreEmpresa(resultSet.getString("NOM_PPAL"));
                         incapacidad.setFechaInicial(resultSet.getString("INC_FECINI"));
                         incapacidad.setFechaRadicacion(resultSet.getString("INC_FECHA_CREACION"));
-                        incapacidad.setTipoIncapacidad(resultSet.getString("TIP_NOMBRE"));
                         incapacidad.setSubTipoIncapacidad(resultSet.getString("SBT_NOMBRE"));
-                        incapacidad.setNumeroDeDias(resultSet.getString("INC_DIAS"));
+                        incapacidad.setSubTipoIncapacidadCodigo(resultSet.getInt("SBT_CODIGO"));
+                        incapacidad.setNumeroDeDias(resultSet.getString("DIAS_INCAPACIDAD"));
                         incapacidad.setEstado(resultSet.getString("INC_ESTADO"));
+                        incapacidad.setEstadoObservacion(resultSet.getString("ESTADO_OBSERVACION"));
+                        incapacidad.setTipoDocumentoEmpleado(resultSet.getString("TIPO_DOC_TRABAJADOR"));
+                        incapacidad.setTipoIncapacidad(resultSet.getString("INC_CONTIN"));
+                        incapacidad.setIncapacidadDescripcion(resultSet.getString("INC_DESCRIPCION"));
+                        incapacidad.setEstadoObservacionTrabajador(resultSet.getString("ESTADO_OBSERVACION_TRAB"));
+                        incapacidad.setNombreEps(resultSet.getString("NOMBRE_EPS"));
+                        incapacidad.setNombreEmpPrincipal(resultSet.getString("NOMBRE_PPAL"));
+                        incapacidad.setNombreEmpUsuaria(resultSet.getString("NOMBRE_USUA"));
+                        incapacidad.setFechaFinal(resultSet.getString("FECHA_FINAL_INCAP"));
                         incapacidades.add(incapacidad);
                     }
                     callableStatement.close();
-                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS,"OK",incapacidades);
+                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK", incapacidades);
                 }
-                return new RespuestaGenerica<>(TipoRespuesta.WARNING, "No se pudieron traer las incapacidades radicadas debido a : " +
-                        callableStatement.getString("VCMENSAJE_PROCESO"),
+                return new RespuestaGenerica<>(TipoRespuesta.WARNING, "No se pudieron traer las incapacidades radicadas debido a : "
+                        + callableStatement.getString("VCMENSAJE_PROCESO"),
                         incapacidades);
             }
         } catch (SQLException e) {
@@ -538,10 +561,12 @@ public class IincapacidaesRepo implements IincapacidadService {
             if (Objects.isNull(endPoint) || Objects.isNull(requestBodyXml)) {
                 return new RespuestaGenerica<>(TipoRespuesta.WARNING, "El procedimiento QB_APP_GESTORDOC.PL_FIRMAR_DOCUMENTO, ha retornado valores nulos");
             }
-            HashMap<String, String> listValues = new HashMap<String, String>() {{
-                put("endPoint", endPoint);
-                put("requestBodyXml", requestBodyXml);
-            }};
+            HashMap<String, String> listValues = new HashMap<String, String>() {
+                {
+                    put("endPoint", endPoint);
+                    put("requestBodyXml", requestBodyXml);
+                }
+            };
             return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Consulta realizada con exito", listValues);
         } catch (Exception e) {
             e.printStackTrace();
@@ -551,24 +576,24 @@ public class IincapacidaesRepo implements IincapacidadService {
 
     @Override
     public RespuestaGenerica<Integer> crearGers(ContratoDTO contratoDTO) {
-        try(Connection connection = Conexion.getConnection()){
+        try (Connection connection = Conexion.getConnection()) {
             String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_CREAR_GERS(?,?,?,?,?,?,?)}";
-            try(CallableStatement callableStatement = connection.prepareCall(consulta)){
-                callableStatement.setInt("NMNITEMP",contratoDTO.getDocumentoEmpresa());
-                callableStatement.setInt("NMDOCUMEPL" , contratoDTO.getDocumentoEmpleado());
-                callableStatement.setString("VCTIPDOCEMP",contratoDTO.getTipoDocumentoEmpresa());
-                callableStatement.setString("VCTIDOCEPL",contratoDTO.getTipoDocumentoEmpleado());
-                callableStatement.registerOutParameter("NMNUMGERS" , OracleTypes.NUMBER);
-                callableStatement.registerOutParameter("VCESTADO_PROCESO" , OracleTypes.VARCHAR);
-                callableStatement.registerOutParameter("VCMENSAJE_PROCESO" , OracleTypes.VARCHAR);
+            try (CallableStatement callableStatement = connection.prepareCall(consulta)) {
+                callableStatement.setInt("NMNITEMP", contratoDTO.getDocumentoEmpresa());
+                callableStatement.setInt("NMDOCUMEPL", contratoDTO.getDocumentoEmpleado());
+                callableStatement.setString("VCTIPDOCEMP", contratoDTO.getTipoDocumentoEmpresa());
+                callableStatement.setString("VCTIDOCEPL", contratoDTO.getTipoDocumentoEmpleado());
+                callableStatement.registerOutParameter("NMNUMGERS", OracleTypes.NUMBER);
+                callableStatement.registerOutParameter("VCESTADO_PROCESO", OracleTypes.VARCHAR);
+                callableStatement.registerOutParameter("VCMENSAJE_PROCESO", OracleTypes.VARCHAR);
                 callableStatement.execute();
                 String respuesta = callableStatement.getString("VCESTADO_PROCESO");
-                if(!"S".equals(respuesta)){
-                    return new RespuestaGenerica<>(TipoRespuesta.WARNING, "No se pudieron traer las incapacidades radicadas debido a : " +
-                            callableStatement.getString("VCMENSAJE_PROCESO"));
+                if (!"S".equals(respuesta)) {
+                    return new RespuestaGenerica<>(TipoRespuesta.WARNING, "No se pudieron traer las incapacidades radicadas debido a : "
+                            + callableStatement.getString("VCMENSAJE_PROCESO"));
                 }
                 Integer numeroGers = callableStatement.getInt("NMNUMGERS");
-                return new RespuestaGenerica<>(TipoRespuesta.SUCCESS,"OK",numeroGers);
+                return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK", numeroGers);
             }
 
         } catch (SQLException e) {
@@ -579,27 +604,27 @@ public class IincapacidaesRepo implements IincapacidadService {
     @Override
     public RespuestaGenerica<EstadoObservacion> listarEstadosObservcacion() {
         List<EstadoObservacion> estadosObservacion = new ArrayList<>();
-        try(Connection connection = Conexion.getConnection()){
+        try (Connection connection = Conexion.getConnection()) {
             String consulta = "{call RHU.QB_APLICATION_JRHU0055.PL_LISTAR_ESTADO_SITIO(?,?,?)}";
-            try(CallableStatement callableStatement = connection.prepareCall(consulta)){
-                callableStatement.registerOutParameter("RCESTADO",OracleTypes.CURSOR);
-                callableStatement.registerOutParameter("VCESTADO_PROCESO",OracleTypes.VARCHAR);
-                callableStatement.registerOutParameter("VCMENSAJE_PROCESO",OracleTypes.VARCHAR);
+            try (CallableStatement callableStatement = connection.prepareCall(consulta)) {
+                callableStatement.registerOutParameter("RCESTADO", OracleTypes.CURSOR);
+                callableStatement.registerOutParameter("VCESTADO_PROCESO", OracleTypes.VARCHAR);
+                callableStatement.registerOutParameter("VCMENSAJE_PROCESO", OracleTypes.VARCHAR);
                 callableStatement.execute();
                 String mensajeProceso = callableStatement.getString("VCESTADO_PROCESO");
-                
-                if("S".equals(mensajeProceso)){
+
+                if ("S".equals(mensajeProceso)) {
                     ResultSet resultSet = (ResultSet) callableStatement.getObject("RCESTADO");
-                    while (resultSet.next()){
+                    while (resultSet.next()) {
                         EstadoObservacion estadoObservacion = new EstadoObservacion();
                         estadoObservacion.setEstado(resultSet.getString("OBS_ESTADO"));
                         estadoObservacion.setDescripcion(resultSet.getString("OBS_DESCRIPCION"));
                         estadoObservacion.setTipo(resultSet.getString("OBS_TIPO"));
                         estadosObservacion.add(estadoObservacion);
                     }
-                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS,"ok",estadosObservacion);
+                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "ok", estadosObservacion);
                 }
-                return new RespuestaGenerica<>(TipoRespuesta.WARNING,"No se obtuvo la lista de estados",estadosObservacion);
+                return new RespuestaGenerica<>(TipoRespuesta.WARNING, "No se obtuvo la lista de estados", estadosObservacion);
             }
         } catch (SQLException e) {
             return new RespuestaGenerica(TipoRespuesta.ERROR, e.toString());
@@ -610,19 +635,19 @@ public class IincapacidaesRepo implements IincapacidadService {
     @Override
     public RespuestaGenerica<ObservacionRadicado> listarObservacionesPorRadicado(Integer numRadicado) {
         List<ObservacionRadicado> observacionRadicado = new ArrayList<>();
-        try(Connection connection = Conexion.getConnection()){
+        try (Connection connection = Conexion.getConnection()) {
             String consulta = "{call RHU.QB_APLICATION_JRHU0055.PL_OBSERVACION_POR_RADICADO(?,?,?,?)}";
-            try(CallableStatement callableStatement = connection.prepareCall(consulta)){
-                callableStatement.setInt("NMIN_RADICACION ",numRadicado);
-                callableStatement.registerOutParameter("RCINC",OracleTypes.CURSOR);
-                callableStatement.registerOutParameter("VCESTADO_PROCESO",OracleTypes.VARCHAR);
-                callableStatement.registerOutParameter("VCMENSAJE_PROCESO",OracleTypes.VARCHAR);
+            try (CallableStatement callableStatement = connection.prepareCall(consulta)) {
+                callableStatement.setInt("NMIN_RADICACION ", numRadicado);
+                callableStatement.registerOutParameter("RCINC", OracleTypes.CURSOR);
+                callableStatement.registerOutParameter("VCESTADO_PROCESO", OracleTypes.VARCHAR);
+                callableStatement.registerOutParameter("VCMENSAJE_PROCESO", OracleTypes.VARCHAR);
                 callableStatement.execute();
                 String mensajeProceso = callableStatement.getString("VCESTADO_PROCESO");
 
-                if("S".equals(mensajeProceso)){
+                if ("S".equals(mensajeProceso)) {
                     ResultSet resultSet = (ResultSet) callableStatement.getObject("RCINC");
-                    while (resultSet.next()){
+                    while (resultSet.next()) {
                         ObservacionRadicado estadoObservacion = new ObservacionRadicado();
                         estadoObservacion.setNumeroRadicado(resultSet.getInt("INC_RADICACION"));
                         estadoObservacion.setNumObservacion(resultSet.getInt("OBS_SECUENCIA"));
@@ -632,12 +657,12 @@ public class IincapacidaesRepo implements IincapacidadService {
                         estadoObservacion.setEstado(resultSet.getString("OBS_ESTADO"));
                         observacionRadicado.add(estadoObservacion);
                     }
-                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS,"ok",observacionRadicado);
+                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "ok", observacionRadicado);
                 }
-                return new RespuestaGenerica<>(TipoRespuesta.WARNING,"No se obtuvo la lista de Observaciones",observacionRadicado);
+                return new RespuestaGenerica<>(TipoRespuesta.WARNING, "No se obtuvo la lista de Observaciones", observacionRadicado);
             }
         } catch (SQLException e) {
-            return new RespuestaGenerica(TipoRespuesta.ERROR, e.toString());  
+            return new RespuestaGenerica(TipoRespuesta.ERROR, e.toString());
         }
-        }
+    }
 }

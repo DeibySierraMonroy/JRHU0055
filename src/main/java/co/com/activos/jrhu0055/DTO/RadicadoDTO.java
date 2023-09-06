@@ -14,27 +14,27 @@ import static co.com.activos.jrhu0055.DTO.RadicadoDTO.NivelCreacion.NC;
  */
 public class RadicadoDTO implements Serializable {
 
-    private String tipoDocumentoEmpleado;
-    private Integer numeroDocumentoEmpleado;
-    private Integer numeroDocumentoEmpresaPrincipal;
-    private String tipoDocumentoEmpresaPrincipal;
-    private Integer contrato;
-    private Integer idGrupoEnfermedad;
-    private Integer idSubGrupoEnfermedad;
-    private String idCodigoEnfermedad;
-    private Integer idContigenciaIncapacidad;
-    private Integer idSubTipoContigencia;
-    private String fechaIncidente;
-    private String fechaInicioIncapacidad;
-    private Integer numeroDeDias;
-    private String prorroga;
-    private Integer idUsuarioCrea;
+    private String tipoDocumentoEmpleado; //ok
+    private Integer numeroDocumentoEmpleado; //ok
+    private Integer numeroDocumentoEmpresaPrincipal; //Ok
+    private String tipoDocumentoEmpresaPrincipal; //OK
+    private Integer contrato; //ok
+    private Integer idGrupoEnfermedad; //Ok
+    private Integer idSubGrupoEnfermedad; //Ok
+    private String idCodigoEnfermedad; //ok
+    private Integer idContigenciaIncapacidad; //ok
+    private Integer idSubTipoContigencia; //OK
+    private String fechaIncidente; //ok
+    private String fechaInicioIncapacidad; //ok
+    private Integer numeroDeDias; //OK
+    private String prorroga; //OK
+    private Integer idUsuarioCrea; //ok
     private Integer numeroRadicado;
-    private String azCodigo;
-    private String deaCodigo;
-    private String tipoACargar;
+    private String azCodigo; //ok
+    private String deaCodigo; //ok
+    private String tipoACargar; //Ok
     private TipoAccion tipoAccion;
-    private List<Documento> documentosACargar;
+    private List<Documento> documentosACargar; //ok
     private NivelCreacion nivel = NC;
 
     private String direccionIp;

@@ -1,29 +1,40 @@
 package co.com.activos.jrhu0055.model;
 
 public class Incapacidad {
-  private String sigla;
-  private String tipoDocumentoEmpresa;
-  private Integer nitEmpresa;
-  private String tipoDocumentoEmpleado;
-  private Integer numeroDocumentoEmpleado;
-  private Integer numeroContrato;
-  private String nombreEmpresa;
-  private Integer numeroRadicado;
-  private String fechaInicial;
-  private String fechaFinal;
-  private String tipoIncapacidad;
-  private String subTipoIncapacidad;
-  private String fechaRadicacion;
-  private String estado;
 
-  private String estadoSitioDelTrabajador;
-  private String estadoObservacion;
+    private String sigla;
+    private String tipoDocumentoEmpresa;
+    private Integer nitEmpresa;
+    private String tipoDocumentoEmpleado;
+    private Integer numeroDocumentoEmpleado;
+    private Integer numeroContrato;
+    private String nombreEmpresa;
+    private Integer numeroRadicado;
+    private String fechaInicial;
+    private String fechaFinal;
+    private String tipoIncapacidad;
+    private String subTipoIncapacidad;
+    private String fechaRadicacion;
+    private String estado;
+    private String nombreEmpPrincipal;
+    private String nombreEmpUsuaria;
 
-  private String numeroDeDias;
+    private String estadoSitioDelTrabajador;
+    private String estadoObservacion;
 
-  private String nombreDelEmpleado;
+    private String numeroDeDias;
 
-  private String fechaDeRadicacion;
+    private String nombreDelEmpleado;
+
+    private String nombreEps;
+
+    private String fechaDeRadicacion;
+    private String incContin;
+
+    private Integer subTipoIncapacidadCodigo;
+
+    private String estadoObservacionTrabajador;
+    private String incapacidadDescripcion;
 
     public Incapacidad() {
     }
@@ -179,4 +190,63 @@ public class Incapacidad {
     public void setNumeroDeDias(String numeroDeDias) {
         this.numeroDeDias = numeroDeDias;
     }
+
+    public String getIncContin() {
+        return incContin;
+    }
+
+    public void setIncContin(String incContin) {
+        this.incContin = incContin;
+    }
+
+    public Integer getSubTipoIncapacidadCodigo() {
+        return subTipoIncapacidadCodigo;
+    }
+
+    public void setSubTipoIncapacidadCodigo(Integer subTipoIncapacidadCodigo) {
+        this.subTipoIncapacidadCodigo = subTipoIncapacidadCodigo;
+    }
+
+    public String getEstadoObservacionTrabajador() {
+        return estadoObservacionTrabajador;
+    }
+
+    public void setEstadoObservacionTrabajador(String estadoObservacionTrabajador) {
+        this.estadoObservacionTrabajador = estadoObservacionTrabajador;
+    }
+
+    public String getIncapacidadDescripcion() {
+        return incapacidadDescripcion;
+    }
+
+    public void setIncapacidadDescripcion(String incapacidadDescripcion) {
+        this.incapacidadDescripcion = incapacidadDescripcion;
+    }
+
+    public String getNombreEps() {
+        return nombreEps;
+    }
+
+    public void setNombreEps(String nombreEps) {
+        this.nombreEps = nombreEps;
+    }
+
+    public String getNombreEmpPrincipal() {
+        return nombreEmpPrincipal;
+    }
+
+    public void setNombreEmpPrincipal(String nombreEmpPrincipal) {
+        this.nombreEmpPrincipal = nombreEmpPrincipal;
+    }
+
+    public String getNombreEmpUsuaria() {
+        return nombreEmpUsuaria;
+    }
+
+    public void setNombreEmpUsuaria(String nombreEmpUsuaria) {
+        this.nombreEmpUsuaria = nombreEmpUsuaria;
+    }
+    
+    
+
 }

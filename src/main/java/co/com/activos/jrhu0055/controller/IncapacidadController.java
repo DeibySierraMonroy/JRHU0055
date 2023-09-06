@@ -133,7 +133,7 @@ public class IncapacidadController {
         try {
             List<Enfermedad> enfermedades
                     = service.listarEnfermedades().getListaResultados()
-                    .stream().limit(20)
+                    .stream()
                     .collect(Collectors.toList());
             GenericEntity<List<Enfermedad>> documentos = new GenericEntity<List<Enfermedad>>(enfermedades) {
             };
@@ -317,10 +317,10 @@ public class IncapacidadController {
         try {
             List<Incapacidad> incapacidadList
                     = service.listarIncapacidades()
-                    .getListaResultados()
-                    .stream()
-                    .sorted(Comparator.comparing(Incapacidad::getFechaInicial))
-                    .collect(Collectors.toList());
+                    .getListaResultados();
+//                    .stream()
+//                    .sorted(Comparator.comparing(Incapacidad::getFechaInicial))
+//                    .collect(Collectors.toList());
             GenericEntity<List<Incapacidad>> incapacidad
                     = new GenericEntity<List<Incapacidad>>(incapacidadList) {
             };

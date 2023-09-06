@@ -10,6 +10,9 @@ public class ValidacionRadicadoDTO implements Serializable {
 
     private String fechaInicio;
 
+    private String fechaAccidente;
+    private Integer idContigenciaIncapacidad;
+
     public String getFechaInicio() {
         return fechaInicio;
     }
@@ -17,8 +20,6 @@ public class ValidacionRadicadoDTO implements Serializable {
     public void setFechaInicio(String fechaInicio) {
         this.fechaInicio = fechaInicio;
     }
-
-
 
     public Integer getNumeroDeDias() {
         return numeroDeDias;
@@ -43,4 +44,22 @@ public class ValidacionRadicadoDTO implements Serializable {
     public void setContratoDTO(ContratoDTO contratoDTO) {
         this.contratoDTO = contratoDTO;
     }
+
+    public String getFechaAccidente() {
+        return fechaAccidente;
+    }
+
+    public void setFechaAccidente(String fechaAccidente) {
+        this.fechaAccidente = fechaAccidente;
+    }
+
+    public Integer getIdContigenciaIncapacidad() {
+        return idContigenciaIncapacidad;
+    }
+
+    public void setIdContigenciaIncapacidad(Integer idContigenciaIncapacidad) {
+        this.idContigenciaIncapacidad = idContigenciaIncapacidad;
+    }
+
+    
 }

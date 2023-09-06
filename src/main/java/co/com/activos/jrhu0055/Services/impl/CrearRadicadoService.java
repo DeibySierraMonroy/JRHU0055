@@ -94,7 +94,7 @@ public class CrearRadicadoService {
     }
 
     private RespuestaGenerica<InformacionTaxonomia> validarTaxonomia(RadicadoDTO radicadoDTO) {
-        InformacionTaxonomia informacionTaxonomia;
+        InformacionTaxonomia informacionTaxonomia = new InformacionTaxonomia();
         try {
             if (Objects.nonNull(radicadoDTO.getDeaCodigo()) && (Objects.nonNull(radicadoDTO.getContrato()))) {
                 informacionTaxonomia = iincapacidadService.obtenerInformacionTaxonomia(
@@ -127,11 +127,11 @@ public class CrearRadicadoService {
         Taxonomia taxonomia;
         try {
             taxonomia = new Taxonomia(radicadoDTO.getTipoACargar(),
-                    radicadoDTO.getAzCodigo(),
+                    radicadoDTO.getAzCodigo(), //ubicacion de la carpeta en AZ-Digital
                     nivelDeCreacion(radicadoDTO),
                     String.valueOf(radicadoDTO.getNumeroDocumentoEmpleado()),
                     _FLUJO,
-                    radicadoDTO.getDeaCodigo());
+                    radicadoDTO.getDeaCodigo()); //Ubicacion de la carpeta en base de datos
             return crearTaxonomia(taxonomia);
         } catch (Exception e) {
             return new RespuestaGenerica(TipoRespuesta.ERROR,
@@ -185,8 +185,8 @@ public class CrearRadicadoService {
         }
         documentoFallidos = documentoProcesados.stream().filter(documentoAlmacenado -> !documentoAlmacenado.getEstadoDelProceso()).count();
         documentosSubidos = documentoProcesados.stream().filter(documentoAlmacenado -> documentoAlmacenado.getEstadoDelProceso()).count();
-        String resultadoDelProceso = "Documentos Exitosos : " + documentosSubidos + " - "
-                + "Documentos Fallidos : " + documentoFallidos;
+        String resultadoDelProceso = "Documentos cargados : " + documentosSubidos + " - "
+                + "Documentos sin cargar : " + documentoFallidos;
         return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK", resultadoDelProceso, documentoProcesados);
     }
 
