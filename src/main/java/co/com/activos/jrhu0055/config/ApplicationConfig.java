@@ -1,6 +1,8 @@
 package co.com.activos.jrhu0055.config;
 
+import co.com.activos.jrhu0055.utiliti.CamposExeptionHandler;
 import co.com.activos.jrhu0055.utiliti.CorsFilter;
+import co.com.activos.jrhu0055.utiliti.ErrorAplicacion;
 
 import javax.ws.rs.core.Application;
 import java.util.Set;
@@ -17,6 +19,7 @@ public class ApplicationConfig extends Application{
 
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(co.com.activos.jrhu0055.controller.IncapacidadController.class);
+        resources.add(co.com.activos.jrhu0055.utiliti.CamposExeptionHandler.class);
         resources.add(co.com.activos.jrhu0055.utiliti.CorsFilter.class);
     }
 

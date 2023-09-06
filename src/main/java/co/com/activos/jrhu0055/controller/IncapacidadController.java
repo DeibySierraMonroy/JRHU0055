@@ -5,6 +5,7 @@ import co.com.activos.jrhu0055.Services.impl.ConcatenarPDF;
 import co.com.activos.jrhu0055.Services.impl.CrearRadicadoService;
 import co.com.activos.jrhu0055.Services.impl.IncapacidadService;
 import co.com.activos.jrhu0055.model.*;
+import co.com.activos.jrhu0055.utiliti.ErrorAplicacion;
 import co.com.activos.jrhu0055.utiliti.RespuestaGenerica;
 import co.com.activos.jrhu0055.utiliti.TipoRespuesta;
 
@@ -15,9 +16,13 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static co.com.activos.jrhu0055.utiliti.ErrorNegocio.Tipo.PARAMETRO_VACIO;
+import static co.com.activos.jrhu0055.utiliti.StringUtils.isNullOrEmpty;
 
 
 @Path("/")
@@ -108,6 +113,7 @@ public class IncapacidadController {
     @Path("/ListarContratos/")
     public Response ListarContratos(ContratoDTO contratoDTO) {
         try {
+
             List<Contrato> listarContratos
                     = service.listaContratos(contratoDTO)
                     .stream()
@@ -132,9 +138,7 @@ public class IncapacidadController {
     public Response listarEnfermedades() {
         try {
             List<Enfermedad> enfermedades
-                    = service.listarEnfermedades().getListaResultados()
-                    .stream()
-                    .collect(Collectors.toList());
+                    = new ArrayList<>(service.listarEnfermedades().getListaResultados());
             GenericEntity<List<Enfermedad>> documentos = new GenericEntity<List<Enfermedad>>(enfermedades) {
             };
             return Response.ok()
@@ -154,6 +158,11 @@ public class IncapacidadController {
     @Path("/documentos/{idSubtipoIncapacidad}")
     public Response listarDocumentos(@PathParam("idSubtipoIncapacidad") Integer idSubtipoIncapacidad) {
         try {
+            if (isNullOrEmpty(String.valueOf(idSubtipoIncapacidad))){
+                throw new ErrorAplicacion(PARAMETRO_VACIO.getMensaje(),
+                        "400");
+            }
+
             List<DocumentoPorSubtipoIncapacidad> documentoPorSubtipoIncapacidads
                     = service.listarDocumentos(idSubtipoIncapacidad)
                     .stream()
