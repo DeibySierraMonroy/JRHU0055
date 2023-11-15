@@ -4,13 +4,16 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class DocumentoPorSubtipoIncapacidad implements Serializable {
-  private Integer idDocumento;
-  private String descripcionDelDocumento;
-  private Boolean requerido;
 
-  public boolean validarSiElDocumentoEsrequerido(String documentoRequerido){
-      return this.requerido = "S".equals(documentoRequerido) ? true : false;
-  }
+    private Integer idDocumento;
+    private String descripcionDelDocumento;
+    private String observacionDelDocumento;
+
+    private Boolean requerido;
+
+    public boolean validarSiElDocumentoEsrequerido(String documentoRequerido) {
+        return this.requerido = "S".equals(documentoRequerido) ? true : false;
+    }
 
     public Integer getIdDocumento() {
         return idDocumento;
@@ -36,10 +39,22 @@ public class DocumentoPorSubtipoIncapacidad implements Serializable {
         this.requerido = requerido;
     }
 
+    public String getObservacionDelDocumento() {
+        return observacionDelDocumento;
+    }
+
+    public void setObservacionDelDocumento(String observacionDelDocumento) {
+        this.observacionDelDocumento = observacionDelDocumento;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         DocumentoPorSubtipoIncapacidad that = (DocumentoPorSubtipoIncapacidad) o;
         return Objects.equals(idDocumento, that.idDocumento) && Objects.equals(descripcionDelDocumento, that.descripcionDelDocumento) && Objects.equals(requerido, that.requerido);
     }

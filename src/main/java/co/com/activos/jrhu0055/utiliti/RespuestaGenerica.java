@@ -4,10 +4,14 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class RespuestaGenerica<T> implements Serializable{
+public class RespuestaGenerica<T> implements Serializable {
+
     private TipoRespuesta status;
     private String mensaje;
     private Integer valorRetorno;
+
+    private String body;
+    private Integer estatus;
 
     private String resultadoSubidaDocumentos;
     private T objeto;
@@ -52,6 +56,18 @@ public class RespuestaGenerica<T> implements Serializable{
         this.status = status;
         this.mensaje = mensaje;
         this.listaResultados = listaResultados;
+    }
+
+    /**
+     *
+     * @param estatus
+     * @param mensaje
+     * @param body
+     */
+    public RespuestaGenerica(Integer estatus, String mensaje, String body) {
+        this.estatus = estatus;
+        this.mensaje = mensaje;
+        this.body = body;
     }
 
     public TipoRespuesta getStatus() {
@@ -117,6 +133,21 @@ public class RespuestaGenerica<T> implements Serializable{
     public void setValorRetorno(Integer valorRetorno) {
         this.valorRetorno = valorRetorno;
     }
-    
-    
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public Integer getEstatus() {
+        return estatus;
+    }
+
+    public void setEstatus(Integer estatus) {
+        this.estatus = estatus;
+    }
+
 }

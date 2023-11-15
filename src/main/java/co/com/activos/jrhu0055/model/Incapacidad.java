@@ -36,6 +36,8 @@ public class Incapacidad {
     private String estadoObservacionTrabajador;
     private String incapacidadDescripcion;
 
+//    private Integer numeroIncapacidad;
+
     public Incapacidad() {
     }
 
@@ -246,7 +248,13 @@ public class Incapacidad {
     public void setNombreEmpUsuaria(String nombreEmpUsuaria) {
         this.nombreEmpUsuaria = nombreEmpUsuaria;
     }
-    
-    
+
+//    public Integer getNumeroIncapacidad() {
+//        return numeroIncapacidad;
+//    }
+//
+//    public void setNumeroIncapacidad(Integer numeroIncapacidad) {
+//        this.numeroIncapacidad = numeroIncapacidad;
+//    }
 
 }

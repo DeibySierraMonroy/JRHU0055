@@ -1,4 +1,3 @@
-
 package co.com.activos.jrhu0055.DTO;
 
 import co.com.activos.jrhu0055.model.Documento;
@@ -14,62 +13,61 @@ import static co.com.activos.jrhu0055.DTO.RadicadoDTO.NivelCreacion.NC;
  */
 public class RadicadoDTO implements Serializable {
 
-    private String tipoDocumentoEmpleado; //ok
-    private Integer numeroDocumentoEmpleado; //ok
-    private Integer numeroDocumentoEmpresaPrincipal; //Ok
-    private String tipoDocumentoEmpresaPrincipal; //OK
-    private Integer contrato; //ok
-    private Integer idGrupoEnfermedad; //Ok
-    private Integer idSubGrupoEnfermedad; //Ok
-    private String idCodigoEnfermedad; //ok
-    private Integer idContigenciaIncapacidad; //ok
-    private Integer idSubTipoContigencia; //OK
-    private String fechaIncidente; //ok
-    private String fechaInicioIncapacidad; //ok
-    private Integer numeroDeDias; //OK
-    private String prorroga; //OK
-    private Integer idUsuarioCrea; //ok
+    private String tipoDocumentoEmpleado;//OK
+    private Integer numeroDocumentoEmpleado;//OK
+    private Integer numeroDocumentoEmpresaPrincipal;//OK
+    private String tipoDocumentoEmpresaPrincipal;//OK
+    private Integer contrato;//OK    
+    private Integer idGrupoEnfermedad;//OK
+    private Integer idSubGrupoEnfermedad;//OK
+    private String idCodigoEnfermedad;//OK
+    private Integer idContigenciaIncapacidad;//OK
+    private Integer idSubTipoContigencia;//OK
+    private String fechaIncidente;//OK
+    private String fechaInicioIncapacidad;//OK
+    private Integer numeroDeDias;//OK
+    private String prorroga;//OK
+    private Integer idUsuarioCrea;//OK
     private Integer numeroRadicado;
-    private String azCodigo; //ok
-    private String deaCodigo; //ok
-    private String tipoACargar; //Ok
+    private Integer numeroIncapacidad;//OK
+    private String azCodigo;//OK
+    private String deaCodigo;//OK
+    private String tipoACargar;//OK
     private TipoAccion tipoAccion;
-    private List<Documento> documentosACargar; //ok
+    private List<Documento> documentosACargar;//OK
     private NivelCreacion nivel = NC;
 
-    private String direccionIp;
+    private String direccionIp;//OK
 
     private String estadoRadicado;
 
-    private String fechaFueroMaterno;
+    private String fechaFueroMaterno;//OK
 
     private String observacion;
-
+    
     public RadicadoDTO() {
     }
 
-    public enum NivelCreacion{
+    public enum NivelCreacion {
         // NC : NIVEL CONTRATO PRIMER NIVEL DE CREACION DE CARPETA
         // NR : NIVEL RADICACION SEGUNDO NIVEL DE CREACION DE CARPETA
-        NC,NR
+        NC, NR
     }
 
-    public RadicadoDTO(String azCodigo, String deaCodigo , List<Documento> documentosACargar , String tipoACargar) {
+    public RadicadoDTO(String azCodigo, String deaCodigo, List<Documento> documentosACargar, String tipoACargar) {
         this.azCodigo = azCodigo;
         this.deaCodigo = deaCodigo;
         this.documentosACargar = documentosACargar;
-        this.tipoACargar=tipoACargar;
+        this.tipoACargar = tipoACargar;
     }
-    
-    
-    
-    public RadicadoDTO(Integer numeroRadicado, String azCodigo, String deaCodigo, Integer numeroDocumentoEmpleado, String tipoACargar,NivelCreacion nivel) {
+
+    public RadicadoDTO(Integer numeroRadicado, String azCodigo, String deaCodigo, Integer numeroDocumentoEmpleado, String tipoACargar, NivelCreacion nivel) {
         this.numeroRadicado = numeroRadicado;
         this.azCodigo = azCodigo;
         this.deaCodigo = deaCodigo;
         this.numeroDocumentoEmpleado = numeroDocumentoEmpleado;
         this.tipoACargar = tipoACargar;
-        this.nivel =nivel;
+        this.nivel = nivel;
     }
 
     public RadicadoDTO(String deaCodigo, Integer numeroDocumentoEmpleado, String tipoACargar, List<Documento> documentosACargar) {
@@ -151,8 +149,6 @@ public class RadicadoDTO implements Serializable {
         this.tipoDocumentoEmpresaPrincipal = tipoDocumentoEmpresaPrincipal;
     }
 
- 
-
     public Integer getContrato() {
         return contrato;
     }
@@ -176,7 +172,6 @@ public class RadicadoDTO implements Serializable {
     public void setNivel(NivelCreacion nivel) {
         this.nivel = nivel;
     }
-
 
     public Integer getIdGrupoEnfermedad() {
         return idGrupoEnfermedad;
@@ -289,4 +284,13 @@ public class RadicadoDTO implements Serializable {
     public void setEstadoRadicado(String estadoRadicado) {
         this.estadoRadicado = estadoRadicado;
     }
+
+    public Integer getNumeroIncapacidad() {
+        return numeroIncapacidad;
+    }
+
+    public void setNumeroIncapacidad(Integer numeroIncapacidad) {
+        this.numeroIncapacidad = numeroIncapacidad;
+    }
+
 }

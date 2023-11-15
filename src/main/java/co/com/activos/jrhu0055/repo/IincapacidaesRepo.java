@@ -178,6 +178,7 @@ public class IincapacidaesRepo implements IincapacidadService {
                         DocumentoPorSubtipoIncapacidad documentoPorSubtipoIncapacidad = new DocumentoPorSubtipoIncapacidad();
                         documentoPorSubtipoIncapacidad.setIdDocumento(resultSet.getInt("TPD_CODIGO"));
                         documentoPorSubtipoIncapacidad.setDescripcionDelDocumento(resultSet.getString("TPD_DESCRIPCION"));
+                        documentoPorSubtipoIncapacidad.setObservacionDelDocumento(resultSet.getString("SUD_OBSERVACIONES"));
                         documentoPorSubtipoIncapacidad.setRequerido(
                                 documentoPorSubtipoIncapacidad.
                                         validarSiElDocumentoEsrequerido(resultSet.getString("SUD_REQUERIDO"))
@@ -309,7 +310,8 @@ public class IincapacidaesRepo implements IincapacidadService {
     @Override
     public RespuestaGenerica<Integer> crearRadicado(RadicadoDTO radicadoDTO) {
         try (Connection connection = Conexion.getConnection()) {
-            String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_CREAR_RADICADO(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+            
+            String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_CREAR_RADICADO(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
             try (CallableStatement callableStatement = connection.prepareCall(consulta)) {
                 callableStatement.setString("VCTDOCUMENTO", radicadoDTO.getTipoDocumentoEmpleado());
                 callableStatement.setInt("NMDOCUMENTO", radicadoDTO.getNumeroDocumentoEmpleado());
@@ -328,6 +330,7 @@ public class IincapacidaesRepo implements IincapacidadService {
                 callableStatement.setInt("NMSUBCONTI", radicadoDTO.getIdSubTipoContigencia());
                 callableStatement.setString("NMIPUSUARIO", radicadoDTO.getDireccionIp());
                 callableStatement.setString("VCFECHFUERMATE", radicadoDTO.getFechaFueroMaterno());
+                callableStatement.setInt("NMINC_INC_NUMERO", radicadoDTO.getNumeroIncapacidad());
                 callableStatement.registerOutParameter("NMRADICADO", OracleTypes.NUMBER);
                 callableStatement.registerOutParameter("VCESTADO_PROCESO", OracleTypes.VARCHAR);
                 callableStatement.registerOutParameter("VCMENSAJE_PROCESO", OracleTypes.VARCHAR);
@@ -352,10 +355,11 @@ public class IincapacidaesRepo implements IincapacidadService {
         String estadoProceso = "";
         String mensajeProceso = "";
         try (Connection connection = Conexion.getConnection()) {
-            String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_VALIDACION_RADICADO(?,?,?,?,?,?,?,?,?,?,?)}";
+            String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_VALIDACION_RADICADO(?,?,?,?,?,?,?,?,?,?,?,?)}";
             try (CallableStatement callableStatement = connection.prepareCall(consulta)) {
                 callableStatement.setString("VCFECHAINICIO", validacionRadicadoDTO.getFechaInicio());
                 callableStatement.setInt("NMDOCUMENTOEPL", validacionRadicadoDTO.getContratoDTO().getDocumentoEmpleado());
+                callableStatement.setInt("NMINCNUMERO", validacionRadicadoDTO.getNumeroIncapacidad());
                 callableStatement.setInt("NMCONTRATO", validacionRadicadoDTO.getNumeroContrato());
                 callableStatement.setInt("NMNUMERODIAS", validacionRadicadoDTO.getNumeroDeDias());
                 callableStatement.setString("VCTIPDOCUMEEPL", validacionRadicadoDTO.getContratoDTO().getTipoDocumentoEmpleado());
@@ -664,5 +668,33 @@ public class IincapacidaesRepo implements IincapacidadService {
         } catch (SQLException e) {
             return new RespuestaGenerica(TipoRespuesta.ERROR, e.toString());
         }
+    }
+
+    @Override
+    public InformacionTaxonomia buscarTaxonomiaGenial(String tipoDocumento, long numeroDocumento, long deaCodigo) {
+        InformacionTaxonomia informacionTaxonomia = new InformacionTaxonomia();
+        try ( Connection conexion = Conexion.getConnection()) {
+            String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_BUSCAR_TAX_INCAPACIDAD(?,?,?,?,?,?,?)}";
+            try ( CallableStatement call = conexion.prepareCall(consulta)) {
+                call.setString("VTDC_TD_EPL", tipoDocumento);
+                call.setLong("NEPL_ND", numeroDocumento);
+                call.setLong("NMDEACODIGO", deaCodigo);
+                call.registerOutParameter("NMDEAPADRE", OracleTypes.NUMBER);
+                call.registerOutParameter("NMAZCODIGO", OracleTypes.NUMBER);
+                call.registerOutParameter("VCESTADO_PROCESO", OracleTypes.VARCHAR);
+                call.registerOutParameter("VCMENSAJE_PROCESO", OracleTypes.VARCHAR);
+                call.execute();
+                informacionTaxonomia.setIdAzDigital(call.getNString("NMAZCODIGO"));
+                informacionTaxonomia.setIdDeaCodigo(call.getNString("NMDEAPADRE"));
+                if (Objects.nonNull(informacionTaxonomia.getIdAzDigital())) {
+                    informacionTaxonomia.setEstado(true);
+                } else {
+                    informacionTaxonomia.setEstado(false);
+                }
+            }
+        } catch (SQLException exception) {
+          return new InformacionTaxonomia(InformacionTaxonomia.RespuestaGenerica.ERROR.getEstado() + exception.getLocalizedMessage());
+        }
+        return informacionTaxonomia;
     }
 }

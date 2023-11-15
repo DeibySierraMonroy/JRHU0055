@@ -19,9 +19,12 @@ import static co.com.activos.jrhu0055.utiliti.ServicioRest.crearTaxonomiaIncapac
 public class CrearRadicadoService {
 
     private static final String _FLUJO = "DOCUMENTOS INCAPACIDADES";
-    private static final String _TIPO_FLUJO = "9";  
+    private static final String _TIPO_FLUJO = "9";
     private static final String _TIPO_DOCUMENTO = "A";
     private static final String _EXT_DOCUMENTO = ".PDF";
+    private static final long _DEA_CODIGO_PADRE = 18648723;
+    private static final String _AZ_CODIGO_PADRE = "1153181";
+    private static final String _TIPO = "C";
 
     @Inject
     private IincapacidadService iincapacidadService;
@@ -53,20 +56,20 @@ public class CrearRadicadoService {
 
                 RespuestaGenerica<DocumentoAlmacenado> cargarDocumentos = construirTaxonomiaParaDocumento(
                         new RadicadoDTO(crearCarpetaRadicado.getObjeto().getIdDeaCodigo(), radicadoDTO.getNumeroDocumentoEmpleado(),
-                                _TIPO_DOCUMENTO, radicadoDTO.getDocumentosACargar()), crearRadicado.getValorRetorno() 
+                                _TIPO_DOCUMENTO, radicadoDTO.getDocumentosACargar()), crearRadicado.getValorRetorno()
                 );
 
                 if (!TipoRespuesta.SUCCESS.equals(cargarDocumentos.getStatus())) {
                     return new RespuestaGenerica<>(TipoRespuesta.ERROR,
                             cargarDocumentos.getMensaje());
                 }
-                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, crearRadicado.getValorRetorno().toString(),
-                         Objects.isNull(cargarDocumentos.getResultadoSubidaDocumentos()) ?
-                                 "Radicado sin documentos" :
-                                 cargarDocumentos.getResultadoSubidaDocumentos(),
-                         Objects.isNull(cargarDocumentos.getListaResultados()) ?
-                                 new ArrayList<>():
-                                         cargarDocumentos.getListaResultados());
+                return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, crearRadicado.getValorRetorno().toString(),
+                        Objects.isNull(cargarDocumentos.getResultadoSubidaDocumentos())
+                        ? "Radicado sin documentos"
+                        : cargarDocumentos.getResultadoSubidaDocumentos(),
+                        Objects.isNull(cargarDocumentos.getListaResultados())
+                        ? new ArrayList<>()
+                        : cargarDocumentos.getListaResultados());
             }
             return new RespuestaGenerica<>(TipoRespuesta.ERROR,
                     "No se puede procesar el radicado , revise la informacion a radicar.");
@@ -85,8 +88,8 @@ public class CrearRadicadoService {
             }
             return construirTaxonomiaParaDocumento(new RadicadoDTO(taxonomiaEncontrada.getObjeto().getIdAzDigital(),
                     taxonomiaEncontrada.getObjeto().getIdDeaCodigo(),
-                            radicadoDTO.getDocumentosACargar(),
-                            radicadoDTO.getTipoACargar()),
+                    radicadoDTO.getDocumentosACargar(),
+                    radicadoDTO.getTipoACargar()),
                     radicadoDTO.getNumeroRadicado());
         }
         return new RespuestaGenerica<>(TipoRespuesta.ERROR,
@@ -97,22 +100,24 @@ public class CrearRadicadoService {
         InformacionTaxonomia informacionTaxonomia = new InformacionTaxonomia();
         try {
             if (Objects.nonNull(radicadoDTO.getDeaCodigo()) && (Objects.nonNull(radicadoDTO.getContrato()))) {
+
                 informacionTaxonomia = iincapacidadService.obtenerInformacionTaxonomia(
                         radicadoDTO.getDeaCodigo(),
                         obtenerNombreCarpeta(radicadoDTO));
+
                 if (informacionTaxonomia.isEstado()) {
                     return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Taxonomia Encontrada", informacionTaxonomia);
                 }
                 return construirTaxonomiaParaCarpeta(radicadoDTO);
             }
-            if(Objects.nonNull(radicadoDTO.getNumeroRadicado())){
-                informacionTaxonomia = iincapacidadService.buscarTaxomiaRadicado(radicadoDTO.getNumeroRadicado(),_TIPO_FLUJO).getObjeto();
+            if (Objects.nonNull(radicadoDTO.getNumeroRadicado())) {
+                informacionTaxonomia = iincapacidadService.buscarTaxomiaRadicado(radicadoDTO.getNumeroRadicado(), _TIPO_FLUJO).getObjeto();
                 if (informacionTaxonomia.isEstado()) {
                     return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Taxonomia Encontrada", informacionTaxonomia);
                 }
-                 return new RespuestaGenerica<>(TipoRespuesta.WARNING,
+                return new RespuestaGenerica<>(TipoRespuesta.WARNING,
                         "El documento no se puede modificar "
-                                + "ya que el radicado no cuenta con una carpeta." , informacionTaxonomia);
+                        + "ya que el radicado no cuenta con una carpeta.", informacionTaxonomia);
             }
             return new RespuestaGenerica<>(TipoRespuesta.ERROR,
                     "No se puede validar la taxonomia debido a que hay campos necesarios sin informacion");
@@ -159,8 +164,8 @@ public class CrearRadicadoService {
                                     documento.getIdDocumento(), documento.getNombreDocumento(), String.valueOf(numeroRadicado)));
                             actulizarDocumentoCargado(
                                     Integer.valueOf(respuesSubidaDeDocumento.getObjeto().getIdDeaCodigo()),
-                                     numeroRadicado,
-                                     Integer.valueOf(documento.getIdDocumento()));
+                                    numeroRadicado,
+                                    Integer.valueOf(documento.getIdDocumento()));
                         } else {
                             documentoProcesadosEnAz.add(validarProcesoDeSubida(Boolean.FALSE, documento.getIdDocumento(),
                                     documento.getNombreDocumento(), String.valueOf(numeroRadicado)));
@@ -194,11 +199,11 @@ public class CrearRadicadoService {
         try {
             RespuestaGenerica<InformacionTaxonomia> respuestaGenerica = crearTaxonomiaIncapacidades(taxonomia);
             if (TipoRespuesta.SUCCESS.equals(respuestaGenerica.getStatus())) {
-                return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Taxonomia Creada para el documento", respuestaGenerica.getObjeto());
+                return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Taxonomia Creada", respuestaGenerica.getObjeto());
             }
             return new RespuestaGenerica(TipoRespuesta.ERROR, respuestaGenerica.getMensaje());
         } catch (Exception e) {
-            return new RespuestaGenerica(TipoRespuesta.ERROR, "Error al Crear la taxonomia en : IncapacidadService:crearTaxonomiaDocumento " + e.getMessage());
+            return new RespuestaGenerica(TipoRespuesta.ERROR, "Error al Crear la taxonomia en : IncapacidadService:crearTaxonomia " + e.getMessage());
         }
     }
 
