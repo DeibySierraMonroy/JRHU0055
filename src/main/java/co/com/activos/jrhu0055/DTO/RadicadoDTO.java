@@ -4,6 +4,7 @@ import co.com.activos.jrhu0055.model.Documento;
 import co.com.activos.jrhu0055.utiliti.TipoAccion;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 import static co.com.activos.jrhu0055.DTO.RadicadoDTO.NivelCreacion.NC;
 
@@ -44,8 +45,26 @@ public class RadicadoDTO implements Serializable {
     private String fechaFueroMaterno;//OK
 
     private String observacion;
-    
+
+    private Origen origen = Origen.RST;
+
+    private Optional<RadicadoGenialDTO> radicadoGenialDTO;
+
+    public Optional<RadicadoGenialDTO> getRadicadoGenialDTO() {
+        return radicadoGenialDTO;
+    }
+
+    public void setRadicadoGenialDTO(Optional<RadicadoGenialDTO> radicadoGenialDTO) {
+        this.radicadoGenialDTO = radicadoGenialDTO;
+    }
+
     public RadicadoDTO() {
+    }
+
+    public enum Origen{
+        // RG : CREAR RADICADO DESDE GENIAL
+        // RST : CREAR RADICADO DESDE SITIO TRABAJADOR
+    RG,RST
     }
 
     public enum NivelCreacion {
@@ -293,4 +312,11 @@ public class RadicadoDTO implements Serializable {
         this.numeroIncapacidad = numeroIncapacidad;
     }
 
+    public Origen getOrigen() {
+        return origen;
+    }
+
+    public void setOrigen(Origen origen) {
+        this.origen = origen;
+    }
 }

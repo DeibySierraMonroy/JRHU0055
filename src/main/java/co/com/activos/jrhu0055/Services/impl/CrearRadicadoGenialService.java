@@ -42,7 +42,7 @@ public class CrearRadicadoGenialService {
         InformacionTaxonomia informacionTaxonomia = new InformacionTaxonomia();
 
         try {
-            informacionTaxonomia = incapacidadService.buscarTaxonomiaGenial(tipoDocumento, numeroDocumento, contrato y radicado ,_DEA_CODIGO_PADRE);
+            informacionTaxonomia = incapacidadService.buscarTaxonomiaGenial(tipoDocumento, numeroDocumento,_DEA_CODIGO_PADRE);
 
             /**
              * Se crea la carpeta del trabajador con su cedula y queda CC

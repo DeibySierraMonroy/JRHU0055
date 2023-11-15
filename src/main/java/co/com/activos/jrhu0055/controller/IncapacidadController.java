@@ -210,7 +210,7 @@ public class IncapacidadController {
     @Produces({MediaType.APPLICATION_JSON})
     public Response crearRadicado(RadicadoDTO radicadoDTO) {
         try {
-            RespuestaGenerica<DocumentoAlmacenado> respuestaDelProceso = crear.crearRadicado(radicadoDTO);
+            RespuestaGenerica<DocumentoAlmacenado> respuestaDelProceso = crear.crearRadicadoSitioTrabajador(radicadoDTO);
             if (TipoRespuesta.SUCCESS.equals(respuestaDelProceso.getStatus())) {
                 return Response.ok()
                         .type(MediaType.APPLICATION_JSON)
@@ -475,5 +475,29 @@ public class IncapacidadController {
             return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", e)).build();
         }
     }
+
+
+
+
+    @POST
+    @Path("radicarIncapacidadGenial")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response crearRadicadoGenial(RadicadoGenialDTO radicadoGenialDTO){
+        try {
+            return null;
+        }catch (Exception exception){
+            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", exception)).build();
+
+        }
+
+    }
+
+
+
+
+
+
+
 
 }
