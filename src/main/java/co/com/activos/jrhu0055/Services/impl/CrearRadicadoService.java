@@ -32,18 +32,21 @@ public class CrearRadicadoService {
 
     public RespuestaGenerica<DocumentoAlmacenado> crearRadicadoGenial(RadicadoGenialDTO radicadoGenialDTO) {
         try {
-
             if (Objects.nonNull(radicadoGenialDTO)) {
+
                 //1. Nivel se buscar la taxonomia de la carpeta del empleado
                 RespuestaGenerica<InformacionTaxonomia> validarTaxonomiaCarpetaEmpleado
-                        = validarOCrearTaxonomiaGenial(radicadoGenialDTO.getTipoDocumento(), radicadoGenialDTO.getNumeroDocumento(), _DEA_CODIGO_PADRE);
+                        = validarOCrearTaxonomiaGenial(
+                          radicadoGenialDTO.getTipoDocumento()
+                        , radicadoGenialDTO.getNumeroDocumento()
+                        , _DEA_CODIGO_PADRE);
                 if (!validarTaxonomiaCarpetaEmpleado.getObjeto().isEstado()) {
                     return new RespuestaGenerica<>(TipoRespuesta.ERROR,
                             "Error al crear la carpeta del empleado debido a : " + validarTaxonomiaCarpetaEmpleado.getMensaje());
                 }
 
-                //2. Se contruye el radicadoDTO dependiendo el nivel a crear
-                RespuestaGenerica<RadicadoDTO> radicadoDTOContruido = contruirDTORadicado(
+                //2. Se contruye el radicadoDTO dependiendo el nivel a crear.
+                RespuestaGenerica<RadicadoDTO> radicadoDTOContruido = construirDTORadicado(
                         radicadoGenialDTO.getTipoDocumento(),
                         radicadoGenialDTO.getNumeroRadicado(),
                         radicadoGenialDTO.getNumeroContrato(),
@@ -54,18 +57,30 @@ public class CrearRadicadoService {
                         _TIPO
                 );
 
+                //2.1 Se construye el objeto radicadoDTO.
                 if (!TipoRespuesta.SUCCESS.equals(radicadoDTOContruido.getStatus())) {
                     return new RespuestaGenerica<>(TipoRespuesta.ERROR,
                             "Error al construir el radicadoDTO debido a : "
                                     + validarTaxonomiaCarpetaEmpleado.getMensaje());
                 }
 
-                //3. Nivel se buscar la taxonomia de la carpeta contrato si no la tiene la crea
+                //3. Nivel se buscar la taxonomia de la carpeta contrato si no la tiene la crea.
                 RespuestaGenerica<InformacionTaxonomia> creacionCarpetaContrato = validarTaxonomia(radicadoDTOContruido.getObjeto());
                 if (!creacionCarpetaContrato.getObjeto().isEstado()) {
                     return new RespuestaGenerica<>(TipoRespuesta.ERROR,
-                            "Error al crear la carpeta de contrato debido a : " + validarTaxonomiaCarpetaEmpleado.getMensaje());
+                            "Error al crear la carpeta de contrato debido a : "
+                                    + validarTaxonomiaCarpetaEmpleado.getMensaje());
                 }
+
+                //4. Nivel se buscar la taxonomia de la carpeta radicado si no la tiene la crea.
+
+
+
+
+
+
+
+
 
                 return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Taxonomias Creadas ");
 
@@ -80,8 +95,11 @@ public class CrearRadicadoService {
 
     }
 
+    private RespuestaGenerica<Boolean> insertarDocumentosBaseDeDatosGenial(Integer numeroRadicado, Integer subtipoIncapacidad){
+        return null;
+    }
 
-    private RespuestaGenerica<RadicadoDTO> contruirDTORadicado(String tipoDocumento,
+    private RespuestaGenerica<RadicadoDTO> construirDTORadicado(String tipoDocumento,
                                                                Integer numeroDocumento,
                                                                Integer numeroContrato,
                                                                Integer numeroRadicado,
@@ -106,7 +124,7 @@ public class CrearRadicadoService {
                         , numeroRadicado
                         , azCodigo
                         , deaCodigo
-                ,tipo);
+                        , tipo);
                 return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "RadicadoDTO construido", radicadoDTO);
             }
             return new RespuestaGenerica<>(TipoRespuesta.ERROR,
