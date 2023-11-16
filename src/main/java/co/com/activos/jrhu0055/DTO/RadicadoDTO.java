@@ -96,13 +96,14 @@ public class RadicadoDTO implements Serializable {
         this.documentosACargar = documentosACargar;
     }
 
-    public RadicadoDTO(String tipoDocumentoEmpleado, Integer numeroDocumentoEmpleado, Integer contrato, String azCodigo, String deaCodigo,String tipo) {
+    public RadicadoDTO(String tipoDocumentoEmpleado, Integer numeroDocumentoEmpleado, Integer contrato, String azCodigo, String deaCodigo,String tipo,List<Documento> documentos) {
         this.tipoDocumentoEmpleado = tipoDocumentoEmpleado;
         this.numeroDocumentoEmpleado = numeroDocumentoEmpleado;
         this.contrato = contrato;
         this.azCodigo = azCodigo;
         this.deaCodigo = deaCodigo;
         this.tipoACargar = tipo;
+        this.documentosACargar =documentos;
     }
 
     public Integer getNumeroRadicado() {

@@ -3,6 +3,7 @@ package co.com.activos.jrhu0055.Services.impl;
 import co.com.activos.jrhu0055.DTO.RadicadoDTO;
 import co.com.activos.jrhu0055.DTO.RadicadoGenialDTO;
 import co.com.activos.jrhu0055.Services.IincapacidadService;
+import co.com.activos.jrhu0055.model.Documento;
 import co.com.activos.jrhu0055.model.DocumentoAlmacenado;
 import co.com.activos.jrhu0055.model.InformacionTaxonomia;
 import co.com.activos.jrhu0055.model.Taxonomia;
@@ -37,7 +38,7 @@ public class CrearRadicadoService {
                 //1. Nivel se buscar la taxonomia de la carpeta del empleado
                 RespuestaGenerica<InformacionTaxonomia> validarTaxonomiaCarpetaEmpleado
                         = validarOCrearTaxonomiaGenial(
-                          radicadoGenialDTO.getTipoDocumento()
+                        radicadoGenialDTO.getTipoDocumento()
                         , radicadoGenialDTO.getNumeroDocumento()
                         , _DEA_CODIGO_PADRE);
                 if (!validarTaxonomiaCarpetaEmpleado.getObjeto().isEstado()) {
@@ -54,7 +55,8 @@ public class CrearRadicadoService {
                         validarTaxonomiaCarpetaEmpleado.getObjeto().getIdAzDigital(),
                         validarTaxonomiaCarpetaEmpleado.getObjeto().getIdDeaCodigo(),
                         RadicadoDTO.NivelCreacion.NC,
-                        _TIPO
+                        _TIPO,
+                        new ArrayList<>()
                 );
 
                 //2.1 Se construye el objeto radicadoDTO.
@@ -72,20 +74,81 @@ public class CrearRadicadoService {
                                     + validarTaxonomiaCarpetaEmpleado.getMensaje());
                 }
 
-                //4. Nivel se buscar la taxonomia de la carpeta radicado si no la tiene la crea.
+                //4. Insertar documentos segun el subtipo de incapacidad
+                RespuestaGenerica<Boolean> documentosInsertados = insertarDocumentosBaseDeDatosGenial(radicadoGenialDTO.getNumeroRadicado(),
+                        radicadoGenialDTO.getSubtipoIncapacidad());
+                if (!documentosInsertados.getObjeto()) {
+                    return new RespuestaGenerica<>(TipoRespuesta.ERROR,
+                            "Error al crear el radicado , no se insertaron los documentos debido a : "
+                                    + documentosInsertados.getMensaje());
+                }
+
+                //5. Nivel se buscar la taxonomia de la carpeta radicado si no la tiene la crea.
+
+                RespuestaGenerica<RadicadoDTO> radicadoDTOContruidoRadicado = construirDTORadicado(
+                        radicadoGenialDTO.getTipoDocumento(),
+                        radicadoGenialDTO.getNumeroRadicado(),
+                        radicadoGenialDTO.getNumeroContrato(),
+                        radicadoGenialDTO.getNumeroRadicado(),
+                        creacionCarpetaContrato.getObjeto().getIdAzDigital(),
+                        creacionCarpetaContrato.getObjeto().getIdDeaCodigo(),
+                        RadicadoDTO.NivelCreacion.NR,
+                        _TIPO,
+                        new ArrayList<>()
+                );
+
+                //6. valida la creacion del radicadoDTO
+
+                if (!TipoRespuesta.SUCCESS.equals(radicadoDTOContruidoRadicado.getStatus())) {
+                    return new RespuestaGenerica<>(TipoRespuesta.ERROR,
+                            "Error al construir el radicadoDTO debido a : "
+                                    + validarTaxonomiaCarpetaEmpleado.getMensaje());
+                }
 
 
+                //7. valida la taxonomia si no la tiene la crea para el radicado.
+                RespuestaGenerica<InformacionTaxonomia> creacionCarpetaRadicado = validarTaxonomia(radicadoDTOContruidoRadicado.getObjeto());
+                if (!creacionCarpetaContrato.getObjeto().isEstado()) {
+                    return new RespuestaGenerica<>(TipoRespuesta.ERROR,
+                            "Error al crear la carpeta de contrato debido a : "
+                                    + validarTaxonomiaCarpetaEmpleado.getMensaje());
+                }
 
 
+                RespuestaGenerica<RadicadoDTO> radicadoDTOContruidoDocumentos = construirDTORadicado(
+                        radicadoGenialDTO.getTipoDocumento(),
+                        radicadoGenialDTO.getNumeroRadicado(),
+                        radicadoGenialDTO.getNumeroContrato(),
+                        radicadoGenialDTO.getNumeroRadicado(),
+                        creacionCarpetaRadicado.getObjeto().getIdAzDigital(),
+                        creacionCarpetaRadicado.getObjeto().getIdDeaCodigo(),
+                        RadicadoDTO.NivelCreacion.NR,
+                        _TIPO_DOCUMENTO,
+                        radicadoGenialDTO.getDocumentosACargar()
+                );
 
+                if (!TipoRespuesta.SUCCESS.equals(radicadoDTOContruidoDocumentos.getStatus())) {
+                    return new RespuestaGenerica<>(TipoRespuesta.ERROR,
+                            "Error al construir el radicadoDTO debido a : "
+                                    + validarTaxonomiaCarpetaEmpleado.getMensaje());
+                }
 
+                RespuestaGenerica<DocumentoAlmacenado> documentosCargados =
+                        construirTaxonomiaParaDocumento(radicadoDTOContruidoDocumentos.getObjeto(),
+                                radicadoGenialDTO.getNumeroRadicado());
 
-
-
-                return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Taxonomias Creadas ");
-
+                if (!TipoRespuesta.SUCCESS.equals(documentosCargados.getStatus())) {
+                    return new RespuestaGenerica<>(TipoRespuesta.ERROR,
+                            documentosCargados.getMensaje());
+                }
+                return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, documentosCargados.getValorRetorno().toString(),
+                        Objects.isNull(documentosCargados.getResultadoSubidaDocumentos())
+                                ? "Radicado sin documentos"
+                                : documentosCargados.getResultadoSubidaDocumentos(),
+                        Objects.isNull(documentosCargados.getListaResultados())
+                                ? new ArrayList<>()
+                                : documentosCargados.getListaResultados());
             }
-
             return new RespuestaGenerica<>(TipoRespuesta.ERROR,
                     "No se puede procesar el radicado , revise la informacion a radicar.");
         } catch (RuntimeException e) {
@@ -96,26 +159,45 @@ public class CrearRadicadoService {
     }
 
     private RespuestaGenerica<Boolean> insertarDocumentosBaseDeDatosGenial(Integer numeroRadicado, Integer subtipoIncapacidad){
-        return null;
+        try {
+            return iincapacidadService.insertarDocumentosGenial(numeroRadicado,subtipoIncapacidad);
+        }catch (Exception e){
+            return new RespuestaGenerica<>(TipoRespuesta.ERROR,
+                    "No se puede procesar el radicado debido a erro al insertar los documentos del radicado " + e.getMessage());
+        }
     }
 
     private RespuestaGenerica<RadicadoDTO> construirDTORadicado(String tipoDocumento,
-                                                               Integer numeroDocumento,
-                                                               Integer numeroContrato,
-                                                               Integer numeroRadicado,
-                                                               String azCodigo,
-                                                               String deaCodigo,
-                                                               RadicadoDTO.NivelCreacion nivelCreacion,
-                                                               String tipo) {
+                                                                Integer numeroDocumento,
+                                                                Integer numeroContrato,
+                                                                Integer numeroRadicado,
+                                                                String azCodigo,
+                                                                String deaCodigo,
+                                                                RadicadoDTO.NivelCreacion nivelCreacion,
+                                                                String tipo,
+                                                                List<Documento> documentos) {
         try {
             RadicadoDTO radicadoDTO;
+            if (!documentos.isEmpty()){
+                radicadoDTO = new RadicadoDTO(tipoDocumento
+                        , numeroDocumento
+                        , numeroContrato
+                        , azCodigo
+                        , deaCodigo
+                        , tipo
+                ,documentos);
+                return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "RadicadoDTO construido", radicadoDTO);
+            }
+
+
             if ("NC".equals(nivelCreacion.name())) {
                 radicadoDTO = new RadicadoDTO(tipoDocumento
                         , numeroDocumento
                         , numeroContrato
                         , azCodigo
                         , deaCodigo
-                        , tipo);
+                        , tipo
+                ,documentos);
                 return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "RadicadoDTO construido", radicadoDTO);
             }
             if ("NR".equals(nivelCreacion.name())) {
@@ -124,9 +206,11 @@ public class CrearRadicadoService {
                         , numeroRadicado
                         , azCodigo
                         , deaCodigo
-                        , tipo);
+                        , tipo
+                ,documentos);
                 return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "RadicadoDTO construido", radicadoDTO);
             }
+
             return new RespuestaGenerica<>(TipoRespuesta.ERROR,
                     "No se puede procesar el radicado , error al construirlo ");
 

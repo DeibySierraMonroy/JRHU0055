@@ -1,6 +1,9 @@
 package co.com.activos.jrhu0055.DTO;
 
+import co.com.activos.jrhu0055.model.Documento;
+
 import java.io.Serializable;
+import java.util.List;
 
 public class RadicadoGenialDTO implements Serializable {
 
@@ -8,6 +11,24 @@ public class RadicadoGenialDTO implements Serializable {
     private String tipoDocumento;
     private Integer numeroDocumento;
     private Integer numeroContrato;
+    private Integer subtipoIncapacidad;
+    private List<Documento> documentosACargar;
+
+    public List<Documento> getDocumentosACargar() {
+        return documentosACargar;
+    }
+
+    public void setDocumentosACargar(List<Documento> documentosACargar) {
+        this.documentosACargar = documentosACargar;
+    }
+
+    public Integer getSubtipoIncapacidad() {
+        return subtipoIncapacidad;
+    }
+
+    public void setSubtipoIncapacidad(Integer subtipoIncapacidad) {
+        this.subtipoIncapacidad = subtipoIncapacidad;
+    }
 
     public RadicadoGenialDTO(Integer numeroRadicado, String tipoDocumento, Integer numeroDocumento, Integer numeroContrato) {
         this.numeroRadicado = numeroRadicado;
