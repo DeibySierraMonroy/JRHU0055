@@ -697,4 +697,25 @@ public class IincapacidaesRepo implements IincapacidadService {
         }
         return informacionTaxonomia;
     }
+
+    @Override
+    public RespuestaGenerica<Boolean> insertarDocumentosGenial(Integer numeroRadicado, Integer subtipoContingencia) {
+        try (Connection connection = Conexion.getConnection()) {
+            String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_DOCUMENT_GENIAL(?,?,?,?)}";
+            try (CallableStatement callableStatement = connection.prepareCall(consulta)) {
+                callableStatement.setInt("NMRADICADO", numeroRadicado);
+                callableStatement.setInt("NMTPD_CODIGO", subtipoContingencia);
+                callableStatement.registerOutParameter("VCESTADO_PROCESO", OracleTypes.VARCHAR);
+                callableStatement.registerOutParameter("VCMENSAJE_PROCESO", OracleTypes.VARCHAR);
+                callableStatement.execute();
+                if ("S".equals(callableStatement.getString("VCESTADO_PROCESO"))) {
+                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK", Boolean.TRUE);
+                }
+                callableStatement.close();
+                return new RespuestaGenerica<>(TipoRespuesta.WARNING, "DOCUMENTO NO ACTUALIZADO", Boolean.FALSE);
+            }
+        } catch (SQLException e) {
+            return new RespuestaGenerica<>(TipoRespuesta.ERROR, "ERROR NO CONTROLADO EN IincapacidaesRepo::actualizarEstadoDocumento DEBIDO A : " + e);
+        }
+    }
 }

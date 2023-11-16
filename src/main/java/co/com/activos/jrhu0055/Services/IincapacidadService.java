@@ -15,6 +15,7 @@ public interface IincapacidadService {
     List<DocumentoPorSubtipoIncapacidad> listarDocumentos (Integer codigoSubTipoIncapacidad);
     InformacionTaxonomia obtenerInformacionTaxonomia(String deaCodigo,String nombreCarpeta);
     InformacionTaxonomia buscarTaxonomiaGenial(String tipoDocumento,long numeroDocumento , long deaCodigo);
+    RespuestaGenerica <Boolean> insertarDocumentosGenial (Integer numeroRadicado, Integer subtipoContingencia);
     RespuestaGenerica<Enfermedad> listarEnfermedades();
     RespuestaGenerica<TerminosYCondiciones> obtenerTerminosYCondiciones();
     RespuestaGenerica<Boolean> actualizarEstadoDocumento(Integer deaCodigo,Integer numeroRadico, Integer codigoDocumento);
