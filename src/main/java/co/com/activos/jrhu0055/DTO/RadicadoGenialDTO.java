@@ -6,10 +6,10 @@ public class RadicadoGenialDTO implements Serializable {
 
     private Integer numeroRadicado;
     private String tipoDocumento;
-    private String numeroDocumento;
+    private Integer numeroDocumento;
     private String numeroContrato;
 
-    public RadicadoGenialDTO(Integer numeroRadicado, String tipoDocumento, String numeroDocumento, String numeroContrato) {
+    public RadicadoGenialDTO(Integer numeroRadicado, String tipoDocumento, Integer numeroDocumento, String numeroContrato) {
         this.numeroRadicado = numeroRadicado;
         this.tipoDocumento = tipoDocumento;
         this.numeroDocumento = numeroDocumento;
@@ -27,11 +27,11 @@ public class RadicadoGenialDTO implements Serializable {
         this.tipoDocumento = tipoDocumento;
     }
 
-    public String getNumeroDocumento() {
+    public Integer getNumeroDocumento() {
         return numeroDocumento;
     }
 
-    public void setNumeroDocumento(String numeroDocumento) {
+    public void setNumeroDocumento(Integer numeroDocumento) {
         this.numeroDocumento = numeroDocumento;
     }
 

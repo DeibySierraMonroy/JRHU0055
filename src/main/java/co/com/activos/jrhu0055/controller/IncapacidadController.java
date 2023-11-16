@@ -476,28 +476,25 @@ public class IncapacidadController {
         }
     }
 
-
-
-
     @POST
-    @Path("radicarIncapacidadGenial")
+    @Path("/radicarIncapacidadGenial")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public Response crearRadicadoGenial(RadicadoGenialDTO radicadoGenialDTO){
+    public Response crearRadicadoGenial(RadicadoGenialDTO radicadoGenialDTO) {
         try {
-            return null;
-        }catch (Exception exception){
+            RespuestaGenerica<DocumentoAlmacenado> respuestaDelProceso = crear.crearRadicadoGenial(radicadoGenialDTO);//
+            if (TipoRespuesta.SUCCESS.equals(respuestaDelProceso.getStatus())) {
+                return Response.ok()
+                        .type(MediaType.APPLICATION_JSON)
+                        .entity(respuestaDelProceso)
+                        .build();
+            }
+            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, respuestaDelProceso.getMensaje())).build();
+        } catch (Exception exception) {
             return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", exception)).build();
 
         }
 
     }
-
-
-
-
-
-
-
 
 }
