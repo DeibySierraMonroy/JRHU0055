@@ -50,9 +50,11 @@ public class CrearRadicadoService {
                         radicadoGenialDTO.getNumeroRadicado(),
                         validarTaxonomiaCarpetaEmpleado.getObjeto().getIdAzDigital(),
                         validarTaxonomiaCarpetaEmpleado.getObjeto().getIdDeaCodigo(),
-                        RadicadoDTO.NivelCreacion.NC);
+                        RadicadoDTO.NivelCreacion.NC,
+                        _TIPO
+                );
 
-                if(!TipoRespuesta.SUCCESS.equals(radicadoDTOContruido.getStatus())){
+                if (!TipoRespuesta.SUCCESS.equals(radicadoDTOContruido.getStatus())) {
                     return new RespuestaGenerica<>(TipoRespuesta.ERROR,
                             "Error al construir el radicadoDTO debido a : "
                                     + validarTaxonomiaCarpetaEmpleado.getMensaje());
@@ -80,28 +82,31 @@ public class CrearRadicadoService {
 
 
     private RespuestaGenerica<RadicadoDTO> contruirDTORadicado(String tipoDocumento,
-                                                                     Integer numeroDocumento,
-                                                                     Integer numeroContrato,
-                                                                     Integer numeroRadicado,
-                                                                     String azCodigo,
-                                                                     String deaCodigo,
-                                                                     RadicadoDTO.NivelCreacion nivelCreacion) {
+                                                               Integer numeroDocumento,
+                                                               Integer numeroContrato,
+                                                               Integer numeroRadicado,
+                                                               String azCodigo,
+                                                               String deaCodigo,
+                                                               RadicadoDTO.NivelCreacion nivelCreacion,
+                                                               String tipo) {
         try {
             RadicadoDTO radicadoDTO;
             if ("NC".equals(nivelCreacion.name())) {
-                radicadoDTO  = new RadicadoDTO(tipoDocumento
-                    , numeroDocumento
-                    , numeroContrato
-                    , azCodigo
-                    , deaCodigo);
+                radicadoDTO = new RadicadoDTO(tipoDocumento
+                        , numeroDocumento
+                        , numeroContrato
+                        , azCodigo
+                        , deaCodigo
+                        , tipo);
                 return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "RadicadoDTO construido", radicadoDTO);
             }
             if ("NR".equals(nivelCreacion.name())) {
-                radicadoDTO  = new RadicadoDTO(tipoDocumento
+                radicadoDTO = new RadicadoDTO(tipoDocumento
                         , numeroDocumento
                         , numeroRadicado
                         , azCodigo
-                        , deaCodigo);
+                        , deaCodigo
+                ,tipo);
                 return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "RadicadoDTO construido", radicadoDTO);
             }
             return new RespuestaGenerica<>(TipoRespuesta.ERROR,
