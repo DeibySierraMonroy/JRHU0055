@@ -4,7 +4,6 @@ import co.com.activos.jrhu0055.model.InformacionTaxonomia;
 import co.com.activos.jrhu0055.model.Taxonomia;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
@@ -13,8 +12,10 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class ServicioRest {
+
     private static final String _URL = "http://eure.activos.com.co:10501/JADM0056/api/rest/document/manager/create";
-    public static RespuestaGenerica<InformacionTaxonomia>  crearTaxonomiaIncapacidades(Taxonomia taxonomia) {
+
+    public static RespuestaGenerica<InformacionTaxonomia> crearTaxonomiaIncapacidades(Taxonomia taxonomia) {
         String responseMessage;
         ObjectMapper mapper = new ObjectMapper();
         StringBuilder reponse = new StringBuilder();
@@ -39,28 +40,28 @@ public class ServicioRest {
         } catch (Exception e) {
             e.printStackTrace();
             return new RespuestaGenerica<>(TipoRespuesta.ERROR,
-                    "Error Consumiendo servicio en ServicioRest:crearTaxonomiaIncapacidades debido a :" + e.getMessage());
+                    CodigoError.INC_CON_AZ_FO2.getDescripcion(), CodigoError.INC_CON_AZ_FO2, e);
         }
         return obtenerRespuestaServicio(responseMessage, reponse.toString());
-    } 
+    }
 
     private static RespuestaGenerica<InformacionTaxonomia> obtenerRespuestaServicio(String repuesta, String body) {
         InformacionTaxonomia informacionTaxonomia = new InformacionTaxonomia();
         try {
-            if (body != null  &&  !(body.contains("ERROR"))) {
+            if (body != null && !(body.contains("ERROR"))) {
                 String azCodigoCli = body.split("azCodigoCli=")[1].split(",")[0];
-                String deaCodigo   = body.split("deaCodigo=")[1].split("}")[0];
+                String deaCodigo = body.split("deaCodigo=")[1].split("}")[0];
                 informacionTaxonomia.setEstado(true);
                 informacionTaxonomia.setIdAzDigital(azCodigoCli);
                 informacionTaxonomia.setIdDeaCodigo(deaCodigo);
-                return new RespuestaGenerica<>(TipoRespuesta.SUCCESS,"Ok" , informacionTaxonomia);
+                return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Ok", informacionTaxonomia);
             }
-            return new RespuestaGenerica(TipoRespuesta.ERROR,"Error al Obtener la respuesta debido a que le servicio respondio " + body
-            ,informacionTaxonomia);
-        }catch (RuntimeException e){
-            return new RespuestaGenerica(TipoRespuesta.ERROR,"Error al construir la respuesta debido a : " + e.getMessage());
+            System.err.println("INC_CON_AZ_F01 : " + body);
+            return new RespuestaGenerica(TipoRespuesta.ERROR, CodigoError.INC_CON_AZ_F01.getDescripcion() + "Debido a  : " + body,
+                     informacionTaxonomia);
+        } catch (RuntimeException e) {
+            return new RespuestaGenerica(TipoRespuesta.ERROR, "Error al construir la respuesta debido a : " + e.getMessage());
         }
     }
-
 
 }

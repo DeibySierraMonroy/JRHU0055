@@ -10,6 +10,7 @@ import oracle.jdbc.OracleTypes;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ public class IincapacidaesRepo implements IincapacidadService {
                     incapacidad.setNumeroDeDias(resultSet.getString("DIAS_INCAPACIDAD"));
                     incapacidad.setEstado(resultSet.getString("INC_ESTADO"));
                     incapacidad.setEstadoObservacion(resultSet.getString("ESTADO_OBSERVACION"));
+                    incapacidad.setObservacionGeneralDevolucion(resultSet.getString("CAUSA_DEVOLUCION_GRAL"));
                     incapacidad.setTipoDocumentoEmpleado(resultSet.getString("TIPO_DOC_TRABAJADOR"));
                     incapacidad.setTipoIncapacidad(resultSet.getString("INC_CONTIN"));
                     incapacidad.setIncapacidadDescripcion(resultSet.getString("INC_DESCRIPCION"));
@@ -310,7 +312,7 @@ public class IincapacidaesRepo implements IincapacidadService {
     @Override
     public RespuestaGenerica<Integer> crearRadicado(RadicadoDTO radicadoDTO) {
         try (Connection connection = Conexion.getConnection()) {
-            
+
             String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_CREAR_RADICADO(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
             try (CallableStatement callableStatement = connection.prepareCall(consulta)) {
                 callableStatement.setString("VCTDOCUMENTO", radicadoDTO.getTipoDocumentoEmpleado());
@@ -476,7 +478,7 @@ public class IincapacidaesRepo implements IincapacidadService {
         return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Ok", informacionTaxonomia);
     }
 
-        @Override
+    @Override
     public RespuestaGenerica<String> actualizarEstadoRadicacion(RadicadoDTO radicadoDTO) {
         try (Connection connection = Conexion.getConnection()) {
             String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_ACTUALIZAR_EST_RADICADO(?,?,?,?,?)}";
@@ -673,9 +675,9 @@ public class IincapacidaesRepo implements IincapacidadService {
     @Override
     public InformacionTaxonomia buscarTaxonomiaGenial(String tipoDocumento, long numeroDocumento, long deaCodigo) {
         InformacionTaxonomia informacionTaxonomia = new InformacionTaxonomia();
-        try ( Connection conexion = Conexion.getConnection()) {
+        try (Connection conexion = Conexion.getConnection()) {
             String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_BUSCAR_TAX_INCAPACIDAD(?,?,?,?,?,?,?)}";
-            try ( CallableStatement call = conexion.prepareCall(consulta)) {
+            try (CallableStatement call = conexion.prepareCall(consulta)) {
                 call.setString("VTDC_TD_EPL", tipoDocumento);
                 call.setLong("NEPL_ND", numeroDocumento);
                 call.setLong("NMDEACODIGO", deaCodigo);
@@ -693,7 +695,7 @@ public class IincapacidaesRepo implements IincapacidadService {
                 }
             }
         } catch (SQLException exception) {
-          return new InformacionTaxonomia(InformacionTaxonomia.RespuestaGenerica.ERROR.getEstado() + exception.getLocalizedMessage());
+            return new InformacionTaxonomia(InformacionTaxonomia.RespuestaGenerica.ERROR.getEstado() + exception.getLocalizedMessage());
         }
         return informacionTaxonomia;
     }
@@ -717,5 +719,32 @@ public class IincapacidaesRepo implements IincapacidadService {
         } catch (SQLException e) {
             return new RespuestaGenerica<>(TipoRespuesta.ERROR, "ERROR NO CONTROLADO EN IincapacidaesRepo::actualizarEstadoDocumento DEBIDO A : " + e);
         }
+    }
+
+    @Override
+    public Integer constanteTamanioPermitido(String nombreConstante) {
+        int limiteTamanio = 0;
+        try (Connection connection = Conexion.getConnection()) {
+            try (CallableStatement callableStatement = connection.prepareCall("{? = call PAR.FB_CONSTANTE_NUM(?,?,?,?,?,?,?,?)}")) {
+
+                callableStatement.registerOutParameter(1, OracleTypes.NUMBER);
+                //Parametros de entrada
+                callableStatement.setString(2, "TOPEARCHIV");
+                callableStatement.setDate(3, new Date(System.currentTimeMillis()));
+                callableStatement.setString(4, "NI");
+                callableStatement.setInt(5, 860090915);
+                callableStatement.setObject(6, null);
+                callableStatement.setObject(7, null);
+                callableStatement.setObject(8, null);
+                callableStatement.setObject(9, null);
+                callableStatement.executeQuery();
+                limiteTamanio = callableStatement.getInt(1);
+                callableStatement.close();
+            }
+            return limiteTamanio;
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getCause());
+        }
+        return limiteTamanio;
     }
 }

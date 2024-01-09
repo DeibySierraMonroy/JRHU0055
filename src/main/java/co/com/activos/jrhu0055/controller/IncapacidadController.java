@@ -217,7 +217,10 @@ public class IncapacidadController {
                         .entity(respuestaDelProceso)
                         .build();
             }
-            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, respuestaDelProceso.getMensaje())).build();
+            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR,
+                    respuestaDelProceso.getCodigo()  ,
+                    respuestaDelProceso.getMensaje() 
+            )).build();
         } catch (Exception e) {
             return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", e)).build();
         }

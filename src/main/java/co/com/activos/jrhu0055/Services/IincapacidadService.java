@@ -29,8 +29,9 @@ public interface IincapacidadService {
     RespuestaGenerica<?>  obtenerEndpointTramaCodAZ(String azCodigo);
     RespuestaGenerica<Integer> crearGers(ContratoDTO contratoDTO);
     RespuestaGenerica<EstadoObservacion> listarEstadosObservcacion();
-
     RespuestaGenerica<ObservacionRadicado> listarObservacionesPorRadicado(Integer numRadicado);
-
+    
+    //'TOPEARCHIV',sysdate,'NI',860090915,null,null,null,null
+    Integer constanteTamanioPermitido(String nombreConstante);
 
 }
