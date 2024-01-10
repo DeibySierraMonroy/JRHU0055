@@ -240,7 +240,7 @@ public class IincapacidaesRepo implements IincapacidadService {
                 ResultSet resultSet = (ResultSet) callableStatement.getObject("RSGPENFER");
                 if (!resultSet.next()) {
                     return new RespuestaGenerica<>(TipoRespuesta.WARNING, "Error al consultar la base de datos debido a :"
-                            + callableStatement.getString("VCMENSAJE_PROCESO"), listaDeEnfermedades);
+                            + callableStatement.getString("VCMENSAJE_PROCESO"), listaDeEnfermedades, "");
                 }
                 while (resultSet.next()) {
                     Enfermedad enfermedad = new Enfermedad();
@@ -251,7 +251,7 @@ public class IincapacidaesRepo implements IincapacidadService {
                     listaDeEnfermedades.add(enfermedad);
                 }
                 callableStatement.close();
-                return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Consulta Generada", listaDeEnfermedades);
+                return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Consulta Generada", listaDeEnfermedades, "");
             }
         } catch (SQLException e) {
             return new RespuestaGenerica<>(TipoRespuesta.ERROR,
@@ -278,10 +278,10 @@ public class IincapacidaesRepo implements IincapacidadService {
                         terminosYCondiciones.setCodigo(resultSet.getString("TER_CODIGO"));
                     }
                     callableStatement.close();
-                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK", terminosYCondiciones);
+                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK", terminosYCondiciones, "");
                 }
                 return new RespuestaGenerica<>(TipoRespuesta.WARNING, "ERROR AL CONSULTAR LOS TERMINOS Y CONDICIONES ",
-                        terminosYCondiciones);
+                        terminosYCondiciones, "");
             }
         } catch (SQLException e) {
             return new RespuestaGenerica<>(TipoRespuesta.ERROR, "ERROR NO CONTROLADO EN IincapacidaesRepo::obtenerTerminosYCondiciones DEBIDO A :" + e);
@@ -300,10 +300,10 @@ public class IincapacidaesRepo implements IincapacidadService {
                 callableStatement.registerOutParameter("VCMENSAJE_PROCESO", OracleTypes.VARCHAR);
                 callableStatement.execute();
                 if ("S".equals(callableStatement.getString("VCESTADO_PROCESO"))) {
-                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK", Boolean.TRUE);
+                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK", Boolean.TRUE, "");
                 }
                 callableStatement.close();
-                return new RespuestaGenerica<>(TipoRespuesta.WARNING, "DOCUMENTO NO ACTUALIZADO", Boolean.FALSE);
+                return new RespuestaGenerica<>(TipoRespuesta.WARNING, "DOCUMENTO NO ACTUALIZADO", Boolean.FALSE, "");
             }
         } catch (SQLException e) {
             return new RespuestaGenerica<>(TipoRespuesta.ERROR, "ERROR NO CONTROLADO EN IincapacidaesRepo::actualizarEstadoDocumento DEBIDO A : " + e);
@@ -343,13 +343,13 @@ public class IincapacidaesRepo implements IincapacidadService {
                 if ("S".equals(callableStatement.getString("VCESTADO_PROCESO"))) {
                     Integer numeroRadicado = callableStatement.getInt("NMRADICADO");
                     return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK",
-                            numeroRadicado);
+                            numeroRadicado, "");
                 }
                 callableStatement.close();
                 return new RespuestaGenerica<>(TipoRespuesta.WARNING, mensaje);
             }
         } catch (SQLException e) {
-            return new RespuestaGenerica<>(TipoRespuesta.ERROR, INC_VAL_CRE_RAD_BD, INC_VAL_CRE_RAD_BD.getDescripcion() + e);
+            return new RespuestaGenerica<>(TipoRespuesta.ERROR, INC_VAL_CRE_RAD_BD, INC_VAL_CRE_RAD_BD.getDescripcion() + e, "");
         }
     }
 
@@ -415,11 +415,11 @@ public class IincapacidaesRepo implements IincapacidadService {
                         documentoCargados.add(documentoCargado);
                     }
                     callableStatement.close();
-                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK", documentoCargados);
+                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK", documentoCargados,  "");
                 }
                 return new RespuestaGenerica<>(TipoRespuesta.WARNING, "Fallo la consulta debido a : "
                         + callableStatement.getString("VCMENSAJE_PROCESO"),
-                        documentoCargados);
+                        documentoCargados, "");
             }
 
         } catch (SQLException e) {
@@ -476,7 +476,7 @@ public class IincapacidaesRepo implements IincapacidadService {
         } catch (SQLException exception) {
             return new RespuestaGenerica(TipoRespuesta.ERROR, exception.toString());
         }
-        return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Ok", informacionTaxonomia);
+        return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Ok", informacionTaxonomia, "");
     }
 
     @Override
@@ -541,11 +541,11 @@ public class IincapacidaesRepo implements IincapacidadService {
                         incapacidades.add(incapacidad);
                     }
                     callableStatement.close();
-                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK", incapacidades);
+                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK", incapacidades, "");
                 }
                 return new RespuestaGenerica<>(TipoRespuesta.WARNING, "No se pudieron traer las incapacidades radicadas debido a : "
                         + callableStatement.getString("VCMENSAJE_PROCESO"),
-                        incapacidades);
+                        incapacidades, "");
             }
         } catch (SQLException e) {
             return new RespuestaGenerica(TipoRespuesta.ERROR, e.toString());
@@ -574,7 +574,7 @@ public class IincapacidaesRepo implements IincapacidadService {
                     put("requestBodyXml", requestBodyXml);
                 }
             };
-            return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Consulta realizada con exito", listValues);
+            return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Consulta realizada con exito", listValues, "");
         } catch (Exception e) {
             e.printStackTrace();
             return new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error no controlado en obtenerEndpointTramaFirma");
@@ -600,7 +600,7 @@ public class IincapacidaesRepo implements IincapacidadService {
                             + callableStatement.getString("VCMENSAJE_PROCESO"));
                 }
                 Integer numeroGers = callableStatement.getInt("NMNUMGERS");
-                return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK", numeroGers);
+                return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK", numeroGers, "");
             }
 
         } catch (SQLException e) {
@@ -629,9 +629,9 @@ public class IincapacidaesRepo implements IincapacidadService {
                         estadoObservacion.setTipo(resultSet.getString("OBS_TIPO"));
                         estadosObservacion.add(estadoObservacion);
                     }
-                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "ok", estadosObservacion);
+                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "ok", estadosObservacion, "");
                 }
-                return new RespuestaGenerica<>(TipoRespuesta.WARNING, "No se obtuvo la lista de estados", estadosObservacion);
+                return new RespuestaGenerica<>(TipoRespuesta.WARNING, "No se obtuvo la lista de estados", estadosObservacion, "");
             }
         } catch (SQLException e) {
             return new RespuestaGenerica(TipoRespuesta.ERROR, e.toString());
@@ -664,9 +664,9 @@ public class IincapacidaesRepo implements IincapacidadService {
                         estadoObservacion.setEstado(resultSet.getString("OBS_ESTADO"));
                         observacionRadicado.add(estadoObservacion);
                     }
-                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "ok", observacionRadicado);
+                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "ok", observacionRadicado, "");
                 }
-                return new RespuestaGenerica<>(TipoRespuesta.WARNING, "No se obtuvo la lista de Observaciones", observacionRadicado);
+                return new RespuestaGenerica<>(TipoRespuesta.WARNING, "No se obtuvo la lista de Observaciones", observacionRadicado, "");
             }
         } catch (SQLException e) {
             return new RespuestaGenerica(TipoRespuesta.ERROR, e.toString());
@@ -712,13 +712,13 @@ public class IincapacidaesRepo implements IincapacidadService {
                 callableStatement.registerOutParameter("VCMENSAJE_PROCESO", OracleTypes.VARCHAR);
                 callableStatement.execute();
                 if ("S".equals(callableStatement.getString("VCESTADO_PROCESO"))) {
-                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK", Boolean.TRUE);
+                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "OK", Boolean.TRUE, "");
                 }
                 callableStatement.close();
-                return new RespuestaGenerica<>(TipoRespuesta.WARNING, "DOCUMENTO NO ACTUALIZADO", Boolean.FALSE);
+                return new RespuestaGenerica<>(TipoRespuesta.WARNING, "DOCUMENTO NO ACTUALIZADO", Boolean.FALSE, "");
             }
         } catch (SQLException e) {
-            return new RespuestaGenerica<>(TipoRespuesta.ERROR, INC_VAL_ACT_O_CRE_DOC.getDescripcion() + e , INC_VAL_ACT_O_CRE_DOC);
+            return new RespuestaGenerica<>(TipoRespuesta.ERROR, INC_VAL_ACT_O_CRE_DOC.getDescripcion() + e , INC_VAL_ACT_O_CRE_DOC, "");
         }
     }
 

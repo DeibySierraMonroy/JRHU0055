@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 public class RespuestaGenerica<T> implements Serializable {
+
     private TipoRespuesta status;
     private CodigoError codigoError;
     private String mensaje;
@@ -18,78 +19,97 @@ public class RespuestaGenerica<T> implements Serializable {
     private Map<String, ?> listValues;
     private Exception exception;
     private String codigo;
+    private String idTransaccionRadicado;
 
     public RespuestaGenerica() {
-    }
-
-    public RespuestaGenerica(TipoRespuesta status, CodigoError codigoError, String mensaje) {
-        this.status = status;
-        this.codigo = codigoError.name();
-        this.mensaje = mensaje;
-    }
-    
-    
-    
-     public RespuestaGenerica(TipoRespuesta status, String mensaje,CodigoError codigoError) {
-        this.status = status;
-        this.mensaje = mensaje;
-        this.codigoError = codigoError;
-    }
-
-    public RespuestaGenerica(TipoRespuesta status, String mensaje, Integer valorRetorno) {
-        this.status = status;
-        this.mensaje = mensaje;
-        this.valorRetorno = valorRetorno;
     }
 
     public RespuestaGenerica(TipoRespuesta status, String mensaje) {
         this.status = status;
         this.mensaje = mensaje;
     }
+
+    public RespuestaGenerica(TipoRespuesta status, CodigoError codigoError, String mensaje, String idTransaccionRadicado) {
+        this.status = status;
+        this.codigo = codigoError.name();
+        this.mensaje = mensaje;
+        this.idTransaccionRadicado = idTransaccionRadicado;
+    }
+
+    public RespuestaGenerica(TipoRespuesta status, String mensaje, CodigoError codigoError, String idTransaccionRadicado) {
+        this.status = status;
+        this.mensaje = mensaje;
+        this.codigoError = codigoError;
+        this.idTransaccionRadicado = idTransaccionRadicado;
+    }
+
+    public RespuestaGenerica(TipoRespuesta status, String mensaje, Integer valorRetorno, String idTransaccionRadicado) {
+        this.status = status;
+        this.mensaje = mensaje;
+        this.valorRetorno = valorRetorno;
+        this.idTransaccionRadicado = idTransaccionRadicado;
+    }
+
+    public RespuestaGenerica(TipoRespuesta status, String mensaje, String idTransaccionRadicado) {
+        this.status = status;
+        this.mensaje = mensaje;
+        this.idTransaccionRadicado = idTransaccionRadicado;
+    }
     
-           
-        public RespuestaGenerica(TipoRespuesta status, String mensaje,CodigoError codigoError, Exception exception) {
+    
+     public RespuestaGenerica(TipoRespuesta status, String mensaje, String idTransaccionRadicado, T objeto) {
+        this.status = status;
+        this.mensaje = mensaje;
+        this.idTransaccionRadicado = idTransaccionRadicado;
+        this.objeto = objeto;
+    }
+
+    public RespuestaGenerica(TipoRespuesta status, String mensaje, CodigoError codigoError, Exception exception, String idTransaccionRadicado) {
         this.status = status;
         this.mensaje = mensaje;
         this.codigoError = codigoError;
         this.exception = exception;
+        this.idTransaccionRadicado = idTransaccionRadicado;
     }
-        
 
-    public RespuestaGenerica(TipoRespuesta status, String mensaje, Map<String, ?> listValues) {
+    public RespuestaGenerica(TipoRespuesta status, String mensaje, Map<String, ?> listValues, String idTransaccionRadicado) {
         this.status = status;
         this.mensaje = mensaje;
         this.listValues = listValues;
+        this.idTransaccionRadicado = idTransaccionRadicado;
     }
 
-    public RespuestaGenerica(TipoRespuesta status, String mensaje, String resultadoSubidaDocumentos, List<T> listaResultados) {
+    public RespuestaGenerica(TipoRespuesta status, String mensaje, String resultadoSubidaDocumentos, List<T> listaResultados, String idTransaccionRadicado) {
         this.status = status;
         this.mensaje = mensaje;
         this.resultadoSubidaDocumentos = resultadoSubidaDocumentos;
         this.listaResultados = listaResultados;
+        this.idTransaccionRadicado = idTransaccionRadicado;
     }
-    
-    
 
-    public RespuestaGenerica(TipoRespuesta status, String mensaje, T objeto) {
+    public RespuestaGenerica(TipoRespuesta status, String mensaje, T objeto, String idTransaccionRadicado) {
         this.status = status;
         this.mensaje = mensaje;
         this.objeto = objeto;
+        this.idTransaccionRadicado = idTransaccionRadicado;
     }
-     
-     public RespuestaGenerica(TipoRespuesta status, String mensaje, String codigo) {
-        this.status = status;
-        this.mensaje = mensaje +  " :" + codigo;
-    }
-     
-   
-    
 
-    public RespuestaGenerica(TipoRespuesta status, String mensaje, List<T> listaResultados) {
+    public RespuestaGenerica(TipoRespuesta status, String mensaje, String codigo, String idTransaccionRadicado) {
+        this.status = status;
+        this.mensaje = mensaje + " :" + codigo;
+        this.idTransaccionRadicado = idTransaccionRadicado;
+    }
+
+    public RespuestaGenerica(TipoRespuesta status, String mensaje, List<T> listaResultados, String idTransaccionRadicado) {
         this.status = status;
         this.mensaje = mensaje;
         this.listaResultados = listaResultados;
+        this.idTransaccionRadicado = idTransaccionRadicado;
     }
+    //TipoRespuesta.WARNING, INC_VAL_CAM, INC_VAL_CAM.getDescripcion(), 
+    //   radicadoDTO.getIdTransaccionRadicado(), new InformacionTaxonomia().setEstado(false));
+
+   
 
     /**
      *
@@ -97,10 +117,24 @@ public class RespuestaGenerica<T> implements Serializable {
      * @param mensaje
      * @param body
      */
-    public RespuestaGenerica(Integer estatus, String mensaje, String body) {
+    public RespuestaGenerica(Integer estatus, String mensaje, String body, String idTransaccionRadicado) {
         this.estatus = estatus;
         this.mensaje = mensaje;
         this.body = body;
+        this.idTransaccionRadicado = idTransaccionRadicado;
+    }
+
+    public RespuestaGenerica(TipoRespuesta status, String mensaje, Exception exception) {
+        this.status = status;
+        this.mensaje = mensaje;
+        this.exception = exception;
+    }
+
+    public RespuestaGenerica(TipoRespuesta status, String mensaje, String idTransaccionRadicado, Exception exception) {
+        this.status = status;
+        this.mensaje = mensaje;
+        this.idTransaccionRadicado = idTransaccionRadicado;
+        this.exception = exception;
     }
 
     public TipoRespuesta getStatus() {
@@ -194,8 +228,13 @@ public class RespuestaGenerica<T> implements Serializable {
     public String getCodigo() {
         return codigo;
     }
-    
-    
 
-    
+    public String getIdTransaccionRadicado() {
+        return idTransaccionRadicado;
+    }
+
+    public void setIdTransaccionRadicado(String idTransaccionRadicado) {
+        this.idTransaccionRadicado = idTransaccionRadicado;
+    }
+
 }

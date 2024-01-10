@@ -1,8 +1,8 @@
 package co.com.activos.jrhu0055.controller;
 
 import co.com.activos.jrhu0055.DTO.*;
+import co.com.activos.jrhu0055.Services.IncapacidadAuditoria;
 import co.com.activos.jrhu0055.Services.impl.ConcatenarPDF;
-import co.com.activos.jrhu0055.Services.impl.CrearRadicadoGenialService;
 import co.com.activos.jrhu0055.Services.impl.CrearRadicadoService;
 import co.com.activos.jrhu0055.Services.impl.IncapacidadService;
 import co.com.activos.jrhu0055.model.*;
@@ -30,6 +30,8 @@ import java.util.Objects;
 @Path("/")
 public class IncapacidadController {
 
+    private static final String NOMBRE_APLICATIVO = "JRHU0055";
+
     @Inject
     private IncapacidadService service;
 
@@ -37,10 +39,10 @@ public class IncapacidadController {
     private CrearRadicadoService crear;
 
     @Inject
-    private CrearRadicadoGenialService crearParaGenial;
+    private ConcatenarPDF concatenarPDF;
 
     @Inject
-    private ConcatenarPDF concatenarPDF;
+    private IncapacidadAuditoria incapacidadAuditoria;
 
     @POST
     @Path("/listarIncapacidades")
@@ -201,7 +203,7 @@ public class IncapacidadController {
                     .build();
         } catch (Exception e) {
             return Response.status(400).entity(new RespuestaGenerica<>(
-                    TipoRespuesta.ERROR, "Error No controlado", e)).build();
+                    TipoRespuesta.ERROR, "Error No controlado " + e)).build();
         }
     }
 
@@ -210,20 +212,21 @@ public class IncapacidadController {
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response crearRadicado(RadicadoDTO radicadoDTO) {
+        RespuestaGenerica<DocumentoAlmacenado> respuestaDelProceso = crear.crearRadicadoSitioTrabajador(radicadoDTO);
         try {
-            RespuestaGenerica<DocumentoAlmacenado> respuestaDelProceso = crear.crearRadicadoSitioTrabajador(radicadoDTO);
             if (TipoRespuesta.SUCCESS.equals(respuestaDelProceso.getStatus())) {
                 return Response.ok()
                         .type(MediaType.APPLICATION_JSON)
                         .entity(respuestaDelProceso)
                         .build();
             }
+            incapacidadAuditoria.guardarAuditoria(respuestaDelProceso.getMensaje() + respuestaDelProceso.getException(), TipoRespuesta.ERROR, NOMBRE_APLICATIVO, respuestaDelProceso.getIdTransaccionRadicado(), "400");
             return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR,
-                    respuestaDelProceso.getCodigo()  ,
-                    respuestaDelProceso.getMensaje() 
+                    respuestaDelProceso.getMensaje(), respuestaDelProceso.getIdTransaccionRadicado()
             )).build();
         } catch (Exception e) {
-            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, INC_VAL_GEN.getDescripcion(),INC_VAL_GEN, e)).build();
+            incapacidadAuditoria.guardarAuditoria(e.getCause().getMessage(), TipoRespuesta.ERROR, NOMBRE_APLICATIVO, respuestaDelProceso.getIdTransaccionRadicado(), "400");
+            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, INC_VAL_GEN.getDescripcion(), INC_VAL_GEN, e, respuestaDelProceso.getIdTransaccionRadicado())).build();
         }
     }
 
@@ -239,7 +242,7 @@ public class IncapacidadController {
                     .entity(validacion)
                     .build();
         } catch (Exception e) {
-            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", e)).build();
+            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado: " + e)).build();
         }
     }
 
@@ -264,7 +267,7 @@ public class IncapacidadController {
                     .type(MediaType.APPLICATION_JSON_TYPE)
                     .build();
         } catch (Exception e) {
-            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", e)).build();
+            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado: " + e)).build();
         }
 
     }
@@ -281,7 +284,7 @@ public class IncapacidadController {
                     .entity(documentoActual)
                     .build();
         } catch (Exception e) {
-            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", e)).build();
+            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado: " + e)).build();
         }
     }
 
@@ -302,7 +305,7 @@ public class IncapacidadController {
             return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, documentoCargado.getMensaje())).build();
 
         } catch (Exception e) {
-            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", e)).build();
+            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado: " + e)).build();
         }
 
     }
@@ -351,7 +354,7 @@ public class IncapacidadController {
                     .type(MediaType.APPLICATION_JSON_TYPE)
                     .build();
         } catch (Exception e) {
-            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", e)).build();
+            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado: " + e)).build();
         }
 
     }
@@ -371,7 +374,7 @@ public class IncapacidadController {
                     .entity(gersCreado)
                     .build();
         } catch (Exception e) {
-            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", e)).build();
+            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado: " + e)).build();
         }
     }
 
@@ -422,7 +425,7 @@ public class IncapacidadController {
                     .build();
 
         } catch (Exception e) {
-            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", e)).build();
+            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado: " + e)).build();
         }
 
     }
@@ -456,30 +459,29 @@ public class IncapacidadController {
                     .build();
 
         } catch (Exception e) {
-            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", e)).build();
+            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado: " + e)).build();
         }
     }
 
-    @POST
-    @Path("/radicarIncapacidadGenial/{tipoDocumento}/{numeroDocumento}/{numeroContrato}/{numeroRadicado}")
-    @Consumes({MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_JSON})
-    public Response crearRadicadoGenial(@PathParam("tipoDocumento") String tipoDocumento, @PathParam("numeroDocumento") int numeroDocumento,
-            @PathParam("numeroContrato") String numeroContrato, @PathParam("numeroRadicado") String numeroRadicado) {
-        try {
-            RespuestaGenerica<InformacionTaxonomia> respuestaDelProceso = crearParaGenial.validarTaxonomiaGenial(tipoDocumento, numeroDocumento, numeroContrato, numeroRadicado);//
-            if (TipoRespuesta.SUCCESS.equals(respuestaDelProceso.getStatus())) {
-                return Response.ok()
-                        .type(MediaType.APPLICATION_JSON)
-                        .entity(respuestaDelProceso)
-                        .build();
-            }
-            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, respuestaDelProceso.getMensaje())).build();
-        } catch (Exception e) {
-            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", e)).build();
-        }
-    }
-
+//    @POST
+//    @Path("/radicarIncapacidadGenial/{tipoDocumento}/{numeroDocumento}/{numeroContrato}/{numeroRadicado}")
+//    @Consumes({MediaType.APPLICATION_JSON})
+//    @Produces({MediaType.APPLICATION_JSON})
+//    public Response crearRadicadoGenial(@PathParam("tipoDocumento") String tipoDocumento, @PathParam("numeroDocumento") int numeroDocumento,
+//            @PathParam("numeroContrato") String numeroContrato, @PathParam("numeroRadicado") String numeroRadicado) {
+//        try {
+//            RespuestaGenerica<InformacionTaxonomia> respuestaDelProceso = crearParaGenial.validarTaxonomiaGenial(tipoDocumento, numeroDocumento, numeroContrato, numeroRadicado);//
+//            if (TipoRespuesta.SUCCESS.equals(respuestaDelProceso.getStatus())) {
+//                return Response.ok()
+//                        .type(MediaType.APPLICATION_JSON)
+//                        .entity(respuestaDelProceso)
+//                        .build();
+//            }
+//            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, respuestaDelProceso.getMensaje())).build();
+//        } catch (Exception e) {
+//            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado: " + e)).build();
+//        }
+//    }
     @POST
     @Path("/radicarIncapacidadGenial")
     @Consumes({MediaType.APPLICATION_JSON})
@@ -495,7 +497,7 @@ public class IncapacidadController {
             }
             return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, respuestaDelProceso.getMensaje())).build();
         } catch (Exception exception) {
-            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", exception)).build();
+            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado: " + exception)).build();
 
         }
 

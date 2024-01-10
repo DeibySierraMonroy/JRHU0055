@@ -42,7 +42,7 @@ public class ServicioRest {
         } catch (Exception e) {
             e.printStackTrace();
             return new RespuestaGenerica<>(TipoRespuesta.ERROR,
-                    CodigoError.INC_CON_AZ_FO2.getDescripcion(), CodigoError.INC_CON_AZ_FO2, e);
+                    CodigoError.INC_CON_AZ_FO2.getDescripcion(), CodigoError.INC_CON_AZ_FO2, e, "");
         }
         return obtenerRespuestaServicio(responseMessage, reponse.toString());
     }
@@ -56,11 +56,11 @@ public class ServicioRest {
                 informacionTaxonomia.setEstado(true);
                 informacionTaxonomia.setIdAzDigital(azCodigoCli);
                 informacionTaxonomia.setIdDeaCodigo(deaCodigo);
-                return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Ok", informacionTaxonomia);
+                return new RespuestaGenerica<>(TipoRespuesta.SUCCESS, "Ok", informacionTaxonomia, "");
             }
             System.err.println("INC_CON_AZ_F01 : " + body);
             return new RespuestaGenerica(TipoRespuesta.ERROR, CodigoError.INC_CON_AZ_F01.getDescripcion() + "Debido a  : " + body,
-                     informacionTaxonomia);
+                     informacionTaxonomia, "");
         } catch (RuntimeException e) {
             return new RespuestaGenerica(TipoRespuesta.ERROR, INC_VAL_CRE_RES.getDescripcion() + e.getMessage());
         }

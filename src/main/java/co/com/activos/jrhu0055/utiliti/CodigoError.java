@@ -27,7 +27,7 @@ public enum CodigoError {
 
     
     INC_CON_AZ_F01("FO1 : Error consumiendo el servicio de Az_Digital , Servicio caido o intermitente"),
-    INC_CON_AZ_FO2("Error Consumiendo servicio en ServicioRest:crearTaxonomiaIncapacidades debido a :"),
+    INC_CON_AZ_FO2("Error Consumiendo servicio en ServicioRest:crearTaxonomiaIncapacidades: (JRHU0056)"),
     INC_VAL_CAM("Error No se puede validar la taxonomia debido a que hay campos necesarios sin informacion"),
     INC_VAL_TAX("Error validando la taxonomia debido a :"),
 

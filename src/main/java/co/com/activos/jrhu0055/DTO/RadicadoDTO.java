@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static co.com.activos.jrhu0055.DTO.RadicadoDTO.NivelCreacion.NC;
+import java.util.UUID;
 
 /**
  *
@@ -50,6 +51,8 @@ public class RadicadoDTO implements Serializable {
 
     private Optional<RadicadoGenialDTO> radicadoGenialDTO;
 
+    private String idTransaccionRadicado;
+
     public Optional<RadicadoGenialDTO> getRadicadoGenialDTO() {
         return radicadoGenialDTO;
     }
@@ -59,12 +62,14 @@ public class RadicadoDTO implements Serializable {
     }
 
     public RadicadoDTO() {
+        this.idTransaccionRadicado = UUID.randomUUID().toString();
+        
     }
 
-    public enum Origen{
+    public enum Origen {
         // RG : CREAR RADICADO DESDE GENIAL
         // RST : CREAR RADICADO DESDE SITIO TRABAJADOR
-    RG,RST
+        RG, RST
     }
 
     public enum NivelCreacion {
@@ -73,14 +78,16 @@ public class RadicadoDTO implements Serializable {
         NC, NR
     }
 
-    public RadicadoDTO(String azCodigo, String deaCodigo, List<Documento> documentosACargar, String tipoACargar) {
+    public RadicadoDTO(String azCodigo, String deaCodigo, List<Documento> documentosACargar, String tipoACargar, String idTransaccionRadicado) {
+        this.idTransaccionRadicado = idTransaccionRadicado;
         this.azCodigo = azCodigo;
         this.deaCodigo = deaCodigo;
         this.documentosACargar = documentosACargar;
         this.tipoACargar = tipoACargar;
     }
 
-    public RadicadoDTO(Integer numeroRadicado, String azCodigo, String deaCodigo, Integer numeroDocumentoEmpleado, String tipoACargar, NivelCreacion nivel) {
+    public RadicadoDTO(Integer numeroRadicado, String azCodigo, String deaCodigo, Integer numeroDocumentoEmpleado, String tipoACargar, NivelCreacion nivel, String idTransaccionRadicado) {
+        this.idTransaccionRadicado = idTransaccionRadicado;
         this.numeroRadicado = numeroRadicado;
         this.azCodigo = azCodigo;
         this.deaCodigo = deaCodigo;
@@ -89,21 +96,23 @@ public class RadicadoDTO implements Serializable {
         this.nivel = nivel;
     }
 
-    public RadicadoDTO(String deaCodigo, Integer numeroDocumentoEmpleado, String tipoACargar, List<Documento> documentosACargar) {
+    public RadicadoDTO(String deaCodigo, Integer numeroDocumentoEmpleado, String tipoACargar, List<Documento> documentosACargar, String idTransaccionRadicado) {
+        this.idTransaccionRadicado = idTransaccionRadicado;
         this.deaCodigo = deaCodigo;
         this.numeroDocumentoEmpleado = numeroDocumentoEmpleado;
         this.tipoACargar = tipoACargar;
         this.documentosACargar = documentosACargar;
     }
 
-    public RadicadoDTO(String tipoDocumentoEmpleado, Integer numeroDocumentoEmpleado, Integer contrato, String azCodigo, String deaCodigo,String tipo,List<Documento> documentos) {
+    public RadicadoDTO(String tipoDocumentoEmpleado, Integer numeroDocumentoEmpleado, Integer contrato, String azCodigo, String deaCodigo, String tipo, List<Documento> documentos, String idTransaccionRadicado) {
+        this.idTransaccionRadicado = idTransaccionRadicado;
         this.tipoDocumentoEmpleado = tipoDocumentoEmpleado;
         this.numeroDocumentoEmpleado = numeroDocumentoEmpleado;
         this.contrato = contrato;
         this.azCodigo = azCodigo;
         this.deaCodigo = deaCodigo;
         this.tipoACargar = tipo;
-        this.documentosACargar =documentos;
+        this.documentosACargar = documentos;
     }
 
     public Integer getNumeroRadicado() {
@@ -329,4 +338,13 @@ public class RadicadoDTO implements Serializable {
     public void setOrigen(Origen origen) {
         this.origen = origen;
     }
+
+    public String getIdTransaccionRadicado() {
+        return idTransaccionRadicado;
+    }
+
+    public void setIdTransaccionRadicado(String idTransaccionRadicado) {
+        this.idTransaccionRadicado = idTransaccionRadicado;
+    }
+
 }
