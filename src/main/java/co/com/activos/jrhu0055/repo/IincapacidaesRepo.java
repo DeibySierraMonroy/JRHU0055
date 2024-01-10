@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+import static co.com.activos.jrhu0055.utiliti.CodigoError.*;
+
 public class IincapacidaesRepo implements IincapacidadService {
 
     @Override
@@ -254,7 +256,7 @@ public class IincapacidaesRepo implements IincapacidadService {
         } catch (SQLException e) {
             return new RespuestaGenerica<>(TipoRespuesta.ERROR,
                     "Error no contralado en IincapacidaesRepo:listarEnfermedades debido a :"
-                    + e);
+                            + e);
         }
 
     }
@@ -347,9 +349,8 @@ public class IincapacidaesRepo implements IincapacidadService {
                 return new RespuestaGenerica<>(TipoRespuesta.WARNING, mensaje);
             }
         } catch (SQLException e) {
-            return new RespuestaGenerica<>(TipoRespuesta.ERROR, "IincapacidaesRepo::crearRadicado DEBIDO A : " + e);
+            return new RespuestaGenerica<>(TipoRespuesta.ERROR, INC_VAL_CRE_RAD_BD, INC_VAL_CRE_RAD_BD.getDescripcion() + e);
         }
-        //return null;
     }
 
     @Override
@@ -717,7 +718,7 @@ public class IincapacidaesRepo implements IincapacidadService {
                 return new RespuestaGenerica<>(TipoRespuesta.WARNING, "DOCUMENTO NO ACTUALIZADO", Boolean.FALSE);
             }
         } catch (SQLException e) {
-            return new RespuestaGenerica<>(TipoRespuesta.ERROR, "ERROR NO CONTROLADO EN IincapacidaesRepo::actualizarEstadoDocumento DEBIDO A : " + e);
+            return new RespuestaGenerica<>(TipoRespuesta.ERROR, INC_VAL_ACT_O_CRE_DOC.getDescripcion() + e , INC_VAL_ACT_O_CRE_DOC);
         }
     }
 

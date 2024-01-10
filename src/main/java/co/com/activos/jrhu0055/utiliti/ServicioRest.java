@@ -11,6 +11,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+import static co.com.activos.jrhu0055.utiliti.CodigoError.INC_VAL_CRE_RES;
+
 public class ServicioRest {
 
     private static final String _URL = "http://eure.activos.com.co:10501/JADM0056/api/rest/document/manager/create";
@@ -60,7 +62,7 @@ public class ServicioRest {
             return new RespuestaGenerica(TipoRespuesta.ERROR, CodigoError.INC_CON_AZ_F01.getDescripcion() + "Debido a  : " + body,
                      informacionTaxonomia);
         } catch (RuntimeException e) {
-            return new RespuestaGenerica(TipoRespuesta.ERROR, "Error al construir la respuesta debido a : " + e.getMessage());
+            return new RespuestaGenerica(TipoRespuesta.ERROR, INC_VAL_CRE_RES.getDescripcion() + e.getMessage());
         }
     }
 

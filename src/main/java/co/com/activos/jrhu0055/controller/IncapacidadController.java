@@ -22,6 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static co.com.activos.jrhu0055.utiliti.CodigoError.INC_VAL_GEN;
 import static co.com.activos.jrhu0055.utiliti.ErrorNegocio.Tipo.PARAMETRO_VACIO;
 import static co.com.activos.jrhu0055.utiliti.StringUtils.isNullOrEmpty;
 import java.util.Objects;
@@ -222,7 +223,7 @@ public class IncapacidadController {
                     respuestaDelProceso.getMensaje() 
             )).build();
         } catch (Exception e) {
-            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, "Error No controlado", e)).build();
+            return Response.status(400).entity(new RespuestaGenerica<>(TipoRespuesta.ERROR, INC_VAL_GEN.getDescripcion(),INC_VAL_GEN, e)).build();
         }
     }
 
